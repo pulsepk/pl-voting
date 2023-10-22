@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <title>Election</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div id="ui" style="display: none;"> 
+        <div class="container">
+            <div id="heading">
+                <h1>Elections</h1>
+                <h2>Candidates</h2>
+            </div>
+                <div class="row">
+                    <form id="myForm">
+                        <label for="candidateName">Select a Candidate:</label>
+                        <input type="radio" id="candidateName" value="" required>
+                        <br>
+                        <button type="submit" id="submit">Submit</button>
+                    </form>
+                </div>
+            <div id="confirmation" style="display: none;">
+                <p>Thanks for voting!</p>
+            </div>
+        </div>
+    </div>
+    <div id="admin" style="display: none;">
+        <div class="container">
+            <div id="heading">
+            <h1>Admin Panel</h1>
+            </div>
+            <div class="button-row">
+                <button class="btn" onclick="startelection()">Start Election</button>
+                <button class="btn" onclick="deleteRecord()">Delete Record</button>
+            </div>
+            <div class="button-row">
+                <button class="btn" onclick="endElection()">End Election</button>
+                <button class="btn" onclick="resetvotes()">Reset Everyone's Votes</button>
+                <button class="btn" onclick="Results()">Results</button>
+            </div>
+        </div>
+    </div>
+    <div id="result" style="display: none;">
+        <div class="container">
+            <div id="heading">
+                <h1>Result</h1>
+            </div>
+            <div id="Chart">
+            <canvas id="pieChart"></canvas>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

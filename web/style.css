@@ -1,0 +1,89 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.container {
+    background-color: #282c34;
+    width: 800px;
+    height: 500px;
+    border-radius: 10px;
+    text-align: center;
+    padding: 20px;
+}
+#heading{
+    margin-top: 20px;
+}
+h1 {
+    color: white;
+    font-size: 36px;
+    margin: 0;
+}
+
+h2 {
+    color: white;
+    font-size: 30px;
+}
+
+.row {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+label {
+    color: white;
+    font-size: 20px;
+}
+
+input[type="radio"] {
+    margin: 0 10px;
+}
+
+button {
+    background-color: #0074D9;
+    color: white;
+    font-size: 20px;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+
+.button-row {
+    display: flex;
+    justify-content: center;
+    margin: 60px;
+}
+
+.btn {
+    margin: 5px; /* Adjust the margin for spacing between buttons */
+    padding: 15px 30px;
+    background-color: #0074D9;
+    border: none;
+    border-radius: 5px;
+    color: #ffffff;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+#confirmation{
+    font-size: 30px;
+    font-family: 'Times New Roman', Times, serif;
+    color: white;
+}
+
+#Chart{
+    height: 200px;
+    width: 240px;
+}
