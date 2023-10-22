@@ -24,7 +24,6 @@ RegisterNetEvent('voting:server:castVote', function(data)
 end)
 
 RegisterNetEvent('pl-voting:checkresults', function(data)
-  print("server")
   MySQL.Async.fetchAll('SELECT name, party, votes FROM election', {}, function(results)
     if results and #results > 0 then
       TriggerClientEvent('pl-voting:sendResults', -1, results)

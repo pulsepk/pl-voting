@@ -7,24 +7,6 @@ function SendReactMessage(action, data)
     })
   end
 
-local dummyCandidatesdata = {
-  { name = "Candidate A"},
-  { name = "Candidate B"},
-}
-
---[[ RegisterCommand('update-candidates', function()
-  local after = {}
-    for k, v in pairs(dummyCandidatesdata) do
-        after[#after + 1] = {
-            name = v.name,
-        }
-    end
-  SendNUIMessage({
-    type = 'updateCandidates',
-    candidates = after
-  })
-end, false) ]]
-
 local function toggleNuiFrame(shouldShow)
   SetNuiFocus(shouldShow, shouldShow)
   SendReactMessage('setVisible', shouldShow)
@@ -32,7 +14,7 @@ end
 
 RegisterNetEvent('pl-voting:startvoting',function()
     local after = {}
-    for k, v in pairs(dummyCandidatesdata) do
+    for k, v in pairs(Config.Candidates) do
       after[#after + 1] = {
           name = v.name,
       }
@@ -42,7 +24,7 @@ RegisterNetEvent('pl-voting:startvoting',function()
     candidates = after
     })
     local zones = {}
-    for k, v in pairs(config.VotingBooths) do
+    for k, v in pairs(Config.VotingBooths) do
         zones[#zones + 1] = BoxZone:Create(vector3(v.x, v.y, v.z), 1.0, 1.0, {
             name = 'votingZone',
             heading = v.w,
@@ -71,8 +53,7 @@ RegisterNetEvent('pl-voting:showui', function()
           QBCore.Functions.TriggerCallback('voting:server:checkIfVoted', function(hasVoted)
               if not hasVoted then
                   SendNUIMessage({
-                      type = 'show_ui',
-                      
+                      type = 'show_ui',  
                   })
                   SetNuiFocus(true, true)
               else
@@ -84,12 +65,6 @@ RegisterNetEvent('pl-voting:showui', function()
   end
 end)
 
-RegisterCommand('show-ui', function()
-  TriggerEvent("showUiEvent")
-  --toggleNuiFrame(true)
-  SetNuiFocus(true,true)
-  --debugPrint('Show NUI frame')
-end, false)
 
 RegisterCommand('uiadmin', function()
   TriggerEvent("ShowUiAdmin")
@@ -116,8 +91,6 @@ end)
 
 RegisterNUICallback('votesubmit',function(data,cb)
     TriggerServerEvent('voting:server:castVote', data)
-    toggleNuiFrame(false)
-    SetNuiFocus(false,false)
 end)
 
 RegisterNUICallback('deleteRecord',function(data,cb)
@@ -143,19 +116,23 @@ end)
 
 RegisterNetEvent('pl-voting:sendResults')
 AddEventHandler('pl-voting:sendResults', function(results)
+    local resultArray = {} -- Create an array to store results
     for _, result in ipairs(results) do
         local name = result.name
         local party = result.party
         local votes = result.votes
+
+        local resultObject = {
+            name = name,
+            party = party,
+            votes = votes
+        }
+        table.insert(resultArray, resultObject) -- Add the result to the array
     end
-    local resultObject = {
-      name = name,
-      party = party,
-      votes = votes
-    }
-    --table.insert(resultsArray, resultObject)
-    SendNUIMessage({
-      type = 'result',
-      --results = resultsArray
+        SendNUIMessage({
+        type = 'result',
+        results = resultArray -- Send the array of results
     })
 end)
+
+

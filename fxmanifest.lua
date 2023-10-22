@@ -1,7 +1,7 @@
 fx_version "cerulean"
 
 description "Voting"
-author "Pulsepk"
+author "PulsePK"
 version '1.0.0'
 
 lua54 'yes'
