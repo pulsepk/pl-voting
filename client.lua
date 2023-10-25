@@ -1,29 +1,6 @@
 local QBCore = exports['qb-core']:GetCoreObject()
 
-function SendReactMessage(action, data)
-    SendNUIMessage({
-      action = action,
-      data = data
-    })
-end
-
-local function toggleNuiFrame(shouldShow)
-  SetNuiFocus(shouldShow, shouldShow)
-  SendReactMessage('setVisible', shouldShow)
-end
-
 RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
-    local after = {}
-    for k, v in pairs(Config.Candidates) do
-      after[#after + 1] = {
-          name = v.name,
-      }
-    end
-    SendNUIMessage({
-    type = 'updateCandidates',
-    candidates = after
-    })
-   
     local zones = {}
     for k, v in pairs(Config.VotingBooths) do
         zones[#zones + 1] = BoxZone:Create(vector3(v.x, v.y, v.z), 1.0, 1.0, {
@@ -48,8 +25,31 @@ RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
 end)
 
 RegisterNetEvent('pl-voting:startvoting',function()
+    local after = {}
+    for k, v in pairs(Config.Candidates) do
+      after[#after + 1] = {
+          name = v.name,
+          party = v.party
+      }
+    end
+    SendNUIMessage({
+    type = 'updateCandidates',
+    candidates = after
+    })
     TriggerServerEvent('pl-voting:startelection')
 end)
+
+function SendReactMessage(action, data)
+    SendNUIMessage({
+      action = action,
+      data = data
+    })
+end
+
+local function toggleNuiFrame(shouldShow)
+  SetNuiFocus(shouldShow, shouldShow)
+  SendReactMessage('setVisible', shouldShow)
+end
 
 RegisterNetEvent('pl-voting:showui', function()
   while true do
@@ -64,11 +64,11 @@ RegisterNetEvent('pl-voting:showui', function()
                             })
                             SetNuiFocus(true, true)
                         else
-                            QBCore.Functions.Notify('You have already voted.', 'error')
+                            TriggerEvent('custom:notification','You have already voted.', 'error')
                         end
                       end)
                 else
-                    QBCore.Functions.Notify('The election are closed.', 'error')
+                    TriggerEvent('custom:notification','The election are closed.', 'error')
                 end
             end)
       end
@@ -82,14 +82,15 @@ RegisterCommand('uiadmin', function()
   SetNuiFocus(true,true)
 end, false)
 
-AddEventHandler("ShowUiAdmin", function()
+RegisterNetEvent('ShowUiAdmin')
+AddEventHandler('ShowUiAdmin', function()
   SendNUIMessage({
       type = "ShowUiAdmin"
   })
 end)
 
-
-AddEventHandler("showUiEvent", function()
+RegisterNetEvent('showUiEvent')
+AddEventHandler('showUiEvent', function()
     SendNUIMessage({
         type = "show_ui"
     })
@@ -121,8 +122,7 @@ RegisterNUICallback('endElection',function(data,cb)
 end)
 
 RegisterNUICallback('Results',function(data,cb)
-  TriggerServerEvent('pl-voting:checkresults', function()
-  end)
+  TriggerServerEvent('pl-voting:checkresults')
 end)
 
 RegisterNetEvent('pl-voting:sendResults')
@@ -141,9 +141,23 @@ AddEventHandler('pl-voting:sendResults', function(results)
         table.insert(resultArray, resultObject) -- Add the result to the array
     end
         SendNUIMessage({
-        type = 'result',
-        results = resultArray -- Send the array of results
-    })
+            type = 'result',
+            results = resultArray -- Send the array of results
+        })
 end)
+
+RegisterNetEvent('custom:notification')
+AddEventHandler('custom:notification', function(message, type)
+    if Config.Notify == 'qb' then
+    QBCore.Functions.Notify(message, type)
+    end
+end)
+
+
+if Config.Debugscript then
+    RegisterCommand("debugscript", function()
+        TriggerEvent('QBCore:Client:OnPlayerLoaded')
+    end)
+end
 
 

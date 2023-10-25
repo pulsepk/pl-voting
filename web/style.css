@@ -1,3 +1,6 @@
+@charset "UTF-8";
+@import url(https://fonts.googleapis.com/css?family=Open+Sans:300,400,700);
+
 body {
     font-family: Arial, sans-serif;
     margin: 0;
@@ -9,7 +12,7 @@ body {
 }
 
 .container {
-    background-color: #282c34;
+    background-color:#1F2739;;
     width: 800px;
     height: 500px;
     border-radius: 10px;
@@ -17,7 +20,13 @@ body {
     padding: 20px;
 }
 #heading{
-    margin-top: 20px;
+    width: 400px;
+    margin-top: 17px;
+}
+#heading p{
+    margin-top: 10px;
+    color: #ddd;
+    font-size: 18px;
 }
 h1 {
     color: white;
@@ -29,12 +38,26 @@ h2 {
     color: white;
     font-size: 30px;
 }
+#goback{
+    
+}
 
 .row {
     display: flex;
     justify-content: center;
     margin-top: 20px;
 }
+
+.radio-container {
+    width: 650px;
+    height: 230px;
+    justify-content: space-between; /* Distribute space between radio buttons */
+    align-items: center; /* Vertically align radio buttons in the center */
+}
+.radioDiv{
+    padding: 10px;
+}
+
 
 label {
     color: white;
@@ -44,6 +67,7 @@ label {
 input[type="radio"] {
     margin: 0 10px;
 }
+
 
 button {
     background-color: #0074D9;
@@ -94,28 +118,115 @@ table {
     margin-top: 20px;
 }
 
-th, td {
-    padding: 10px;
+.resultsTable th h3 {
+    font-weight: bold;
+    font-size: 1em;
+  text-align: left;
+  color: #185875;
+}
+
+.resultsTable td {
+    font-weight: normal;
+    font-size: 1em;
+  -webkit-box-shadow: 0 2px 2px -2px #0E1119;
+     -moz-box-shadow: 0 2px 2px -2px #0E1119;
+          box-shadow: 0 2px 2px -2px #0E1119;
+}
+
+.resultsTable {
     text-align: left;
+    overflow: hidden;
+    width: 80%;
+    margin: 0 auto;
+  display: table;
+  padding: 0 0 8em 0;
 }
 
-th {
-    background-color: #333;
-    color: #fff;
+.resultsTable td, .resultsTable th {
+    padding-bottom: 2%;
+    padding-top: 2%;
+  padding-left:2%;  
 }
 
-tr:nth-child(even) {
-    background-color: #f2f2f2;
+/* Background-color of the odd rows */
+.resultsTable tr:nth-child(odd) {
+    background-color: #323C50;
 }
 
-tr:nth-child(odd) {
-    background-color: #fff;
+/* Background-color of the even rows */
+.resultsTable tr:nth-child(even) {
+    background-color: #2C3446;
 }
 
-th, td {
-    border: 1px solid #ddd;
+.resultsTable th {
+    background-color: #1F2739;
 }
 
-tr:hover {
-    background-color: #ddd;
+.resultsTable td:first-child { color: #FB667A; }
+
+.resultsTable tr:hover {
+   background-color: #464A52;
+-webkit-box-shadow: 0 6px 6px -6px #0E1119;
+     -moz-box-shadow: 0 6px 6px -6px #0E1119;
+          box-shadow: 0 6px 6px -6px #0E1119;
+}
+
+.resultsTable td:hover {
+  background-color: #FFF842;
+  color: #403E10;
+  font-weight: bold;
+  
+  box-shadow: #7F7C21 -1px 1px, #7F7C21 -2px 2px, #7F7C21 -3px 3px, #7F7C21 -4px 4px, #7F7C21 -5px 5px, #7F7C21 -6px 6px;
+  transform: translate3d(6px, -6px, 0);
+  
+  transition-delay: 0s;
+    transition-duration: 0.4s;
+    transition-property: all;
+  transition-timing-function: line;
+}
+
+@media (max-width: 800px) {
+.resultsTable td:nth-child(4),
+.resultsTable th:nth-child(4) { display: none; }
+}
+
+h3 {
+    font-size:3em; 
+    font-weight: 300;
+    line-height:1em;
+    text-align: center;
+    color: #4DC3FA;
+}
+
+
+.btn {
+    background-image: linear-gradient(92.88deg, #455EB5 9.16%, #5643CC 43.89%, #673FD7 64.72%);
+    border-radius: 8px;
+    border-style: none;
+    box-sizing: border-box;
+    color: #FFFFFF;
+    cursor: pointer;
+    flex-shrink: 0;
+    font-family: "Inter UI","SF Pro Display",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen,Ubuntu,Cantarell,"Open Sans","Helvetica Neue",sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    height: 4rem;
+    padding: 0 1.6rem;
+    text-align: center;
+    text-shadow: rgba(0, 0, 0, 0.25) 0 3px 8px;
+    transition: all .5s;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+  }
+  
+.btn:hover {
+    box-shadow: rgba(80, 63, 205, 0.5) 0 1px 30px;
+    transition-duration: .1s;
+}
+  
+@media (min-width: 768px) {
+.btn {
+      padding: 0 2.6rem;
+}
 }
