@@ -5,14 +5,14 @@ function SendReactMessage(action, data)
       action = action,
       data = data
     })
-  end
+end
 
 local function toggleNuiFrame(shouldShow)
   SetNuiFocus(shouldShow, shouldShow)
   SendReactMessage('setVisible', shouldShow)
 end
 
-RegisterNetEvent('pl-voting:startvoting',function()
+RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
     local after = {}
     for k, v in pairs(Config.Candidates) do
       after[#after + 1] = {
@@ -23,12 +23,13 @@ RegisterNetEvent('pl-voting:startvoting',function()
     type = 'updateCandidates',
     candidates = after
     })
+   
     local zones = {}
     for k, v in pairs(Config.VotingBooths) do
         zones[#zones + 1] = BoxZone:Create(vector3(v.x, v.y, v.z), 1.0, 1.0, {
             name = 'votingZone',
             heading = v.w,
-            debugPoly = true
+            -- debugPoly = true
         })
     end
     votingComboZone = ComboZone:Create(zones, {
@@ -46,20 +47,30 @@ RegisterNetEvent('pl-voting:startvoting',function()
     end)
 end)
 
+RegisterNetEvent('pl-voting:startvoting',function()
+    TriggerServerEvent('pl-voting:startelection')
+end)
+
 RegisterNetEvent('pl-voting:showui', function()
   while true do
       if not inZone then break end
       if IsControlJustReleased(0, 38) then
-          QBCore.Functions.TriggerCallback('voting:server:checkIfVoted', function(hasVoted)
-              if not hasVoted then
-                  SendNUIMessage({
-                      type = 'show_ui',  
-                  })
-                  SetNuiFocus(true, true)
-              else
-                  QBCore.Functions.Notify('You have already voted.', 'error')
-              end
-          end)
+            QBCore.Functions.TriggerCallback('voting:server:checkelectionstate', function(electionState)
+                if electionState then
+                    QBCore.Functions.TriggerCallback('voting:server:checkIfVoted', function(hasVoted)
+                        if not hasVoted then
+                            SendNUIMessage({
+                                type = 'show_ui',  
+                            })
+                            SetNuiFocus(true, true)
+                        else
+                            QBCore.Functions.Notify('You have already voted.', 'error')
+                        end
+                      end)
+                else
+                    QBCore.Functions.Notify('The election are closed.', 'error')
+                end
+            end)
       end
       Wait(3)
   end
@@ -106,7 +117,7 @@ RegisterNUICallback('resetvotes',function(data,cb)
 end)
 
 RegisterNUICallback('endElection',function(data,cb)
-  
+    TriggerServerEvent('pl-voting:endElection')
 end)
 
 RegisterNUICallback('Results',function(data,cb)

@@ -1,5 +1,17 @@
 local QBCore = exports['qb-core']:GetCoreObject()
 
+QBCore.Functions.CreateCallback('voting:server:checkelectionstate', function(source, cb)
+  local cid = QBCore.Functions.GetPlayer(source).PlayerData.citizenid
+  MySQL.Async.fetchScalar('SELECT state FROM electionstate', {}, function(electionState)
+    if electionState then
+      cb(true)
+    else
+      cb(false)
+    end
+  end)
+end)
+
+
 QBCore.Functions.CreateCallback('voting:server:checkIfVoted', function(source, cb)
   local cid = QBCore.Functions.GetPlayer(source).PlayerData.citizenid
   local hasVoted = MySQL.Sync.fetchScalar('SELECT hasvoted FROM players WHERE citizenid = ? LIMIT 1', {cid})
@@ -38,6 +50,16 @@ end)
 
 RegisterNetEvent('pl-voting:resetsvotes', function(data)
   MySQL.Async.execute('UPDATE players SET hasvoted = 0 WHERE hasvoted = 1', {}, function(rowsChanged)
+  end)
+end)
+
+RegisterNetEvent('pl-voting:endElection', function(data)
+  MySQL.Async.execute('UPDATE electionstate SET state = 0 WHERE state = 1', {}, function(rowsChanged)
+  end)
+end)
+
+RegisterNetEvent('pl-voting:startelection', function(data)
+  MySQL.Async.execute('UPDATE electionstate SET state = 1 WHERE state = 0', {}, function(rowsChanged)
   end)
 end)
 
