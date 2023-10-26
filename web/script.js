@@ -151,3 +151,18 @@ function resetvotes(){
 function endElection(){
     axios.post(`https://${GetParentResourceName()}/endElection`, {})
 }
+
+function exit(){
+    document.getElementById("ui").style.display = "none";  
+    document.getElementById("admin").style.display = "none";
+    axios.post(`https://${GetParentResourceName()}/hideFrame`, {})
+        .then(function (response) { 
+        })
+        .catch(function (error) {
+        });  
+}
+
+function gobackresults(){
+    document.getElementById("result").style.display = "none";
+    document.getElementById("admin").style.display = "block";
+}

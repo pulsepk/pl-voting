@@ -81,12 +81,37 @@ RegisterNetEvent('pl-voting:startelection', function()
     TriggerEvent('custom:chatAnnouncement', 'The election is started! Head over to City Hall to cast your vote.')
   end
 end)
+function CheckScriptVersion()
+  local scriptVersion = '1.0.0'  -- Your current script version
+  local latestVersion = nil
 
-RegisterNetEvent('custom:chatAnnouncement')
-AddEventHandler('custom:chatAnnouncement',function(msg)
-    TriggerClientEvent('chat:addMessage', -1, {
-        color = { 255, 0, 0},
-        multiline = true,
-        args = {"Announcement", msg}
-    })
+  PerformHttpRequest('https://api.github.com/repos/pulsepk/pl-voting-version/releases/latest', function(statusCode, data, headers)
+      if statusCode == 200 then
+          local release = json.decode(data)
+          if release and release.tag_name then
+              latestVersion = release.tag_name
+          end
+      end
+
+      if latestVersion then
+          if scriptVersion == latestVersion then
+              print('Your script is up to date (v' .. scriptVersion .. ')')
+          else
+              print('New version available! Your version: v' .. scriptVersion .. ', Latest version: v' .. latestVersion)
+          end
+      else
+          print('Failed to check for updates.')
+      end
+  end, 'GET', '', { ['User-Agent'] = 'YourServerName' })
+end
+
+
+AddEventHandler('onServerResourceStart', function(resourceName)
+  if Config.UpdateVersion then
+  if resourceName == GetCurrentResourceName() then
+      CheckScriptVersion()
+  end
+  end
 end)
+
+

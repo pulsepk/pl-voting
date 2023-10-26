@@ -1,7 +1,7 @@
 fx_version "cerulean"
 
-description "Voting"
-author "PulsePK"
+description "Advanced Fivem Election Voting System"
+author "PulsePK https://discord.gg/yc94hR9kPx"
 version '1.0.0'
 
 lua54 'yes'
@@ -12,18 +12,23 @@ games {
 
 ui_page 'web/index.html'
 
-shared_script 'config.lua'
+shared_script {
+    'config.lua',
+    'locale/*.lua'
+}
 
 client_script {
-    'client.lua',
+    'client/client.lua',
+    'client/clientopen.lua',
     '@PolyZone/client.lua',
 	'@PolyZone/BoxZone.lua',
     '@PolyZone/ComboZone.lua'
+
 }
 server_script {
     '@oxmysql/lib/MySQL.lua',
-    'config.lua',
-    'server.lua'
+    'server/server.lua',
+    'server/serveropen.lua'
 }
 
 files {

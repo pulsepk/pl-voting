@@ -6,76 +6,83 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://kit.fontawesome.com/f597c30ce2.js" crossorigin="anonymous"></script>
     <title>Election</title>
+    <title>Document</title>
     <link rel="stylesheet" type="text/css" href="style.css">
+
 </head>
 <body>
-    <div id="ui" style="display: none;"> 
-        <div class="container">
-                <div id="heading">
-                    <h1>Elections</h1>
-                    <h2>Candidates</h2>
-                    <p>Please select anyone of the Following Candidates and click on submit</p>
-                </div>
-                <div class="row">
-                    <form id="myForm">
-                        <div id="radioButtons" class="radio-container">
-                            
-                        </div>
-                        <br>
-                        <div class="row">
-                        <button class="btn" type="submit" id="submit">Submit</button>
-                        </div>
-                    </form>
-                </div>
-            </div>            
-            
+    <div id="ui" style="display: none;">
+        <div class="grid-container">
+            <div class="grid-item item1">
+                <h1>Elections</h1>
+                <h2>Candidates</h2>
+            </div>
+            <div class="grid-item item2">
+                <button id="arrowButton" onclick="exit()">
+                    <i class="fa-solid fa-arrow-left fa-beat fa-2xl" style="color: #ffffff;"></i>
+                </button>
+            </div>
+            <div class="grid-item item3">
+                <p>Please select anyone of the Following Candidates and click on submit</p>
+                <form id="myForm">
+                    <div id="radioButtons" class="radio-container">
+                    
+                    </div>
+                    <br>
+                    <div class="row">
+                    <button class="btn" type="submit" id="submit">Submit</button>
+                    </div>
+                </form>
+            </div>  
         </div>
     </div>
     <div id="admin" style="display: none;">
-        <div class="container">
-            <div id="heading">
-            <h1>Admin Panel</h1>
+        <div class="grid-container">
+            <div class="grid-item item1">
+                <h1>Admin Panel</h1>
             </div>
-            <div class="button-row">
-                <button class="btn" onclick="startelection()">Start Election</button>
-                <button class="btn" onclick="deleteRecord()">Delete Record</button>
+            <div class="grid-item item2">
+                <button id="arrowButton" onclick="exit()">
+                    <i class="fa-solid fa-arrow-left fa-beat fa-2xl" style="color: #ffffff;"></i>
+                </button>
             </div>
-            <div class="button-row">
-                <button class="btn" onclick="endElection()">End Election</button>
-                <button class="btn" onclick="resetvotes()">Reset Everyone's Votes</button>
-                
-            </div>
-            <div class="button-row">
-                <button class="btn" id="resultsButton">Results</button>
-                
-            </div>
+            <div class="grid-item item3">
+                <div class="button-container">
+                        <button class="btn" onclick="startelection()">Start Election</button>
+                        <button class="btn" onclick="deleteRecord()">Delete Record</button>
+                        <button class="btn" id="resultsButton">Results</button>
+                        <button class="btn" onclick="endElection()">End Election</button>
+                        <button class="btn" onclick="resetvotes()">Reset Everyone's Votes</button>
+                </div>
+            </div>  
         </div>
     </div>
     <div id="result" style="display: none;">
-        <div class="container">
-            <div id="heading">
+        <div class="grid-container">
+            <div class="grid-item item1">
                 <h1>Election Results</h1>
-                <!-- <div class="left">
-                    <i class="fa-solid fa-arrow-left" style="color: #ffffff;"></i>
-                </div> -->
             </div>
-            <table id="resultsTable" class="resultsTable" style="width:100%">
-                <thead>
-                    <tr>
-                        <th><h3>Candidate Name</h3></th>
-                        <th><h3>Party</h3></th>
-                        <th><h3>Votes</h3></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Results will be inserted here dynamically -->
-                </tbody>
-            </table>
+            <div class="grid-item item2">
+                <button id="arrowButton" onclick="gobackresults()">
+                    <i class="fa-solid fa-arrow-left fa-beat fa-2xl" style="color: #ffffff;"></i>
+                </button>
+            </div>
+            <div class="grid-item item3">
+                <table id="resultsTable" class="resultsTable" style="width:90%">
+                    <thead>
+                        <tr>
+                            <th><h3>Candidate Name:</h3></th>
+                            <th><h3>Party:</h3></th>
+                            <th><h3>Votes:</h3></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                      
+                    </tbody>
+                </table>
+            </div>  
         </div>
     </div>
-   
-    
-   
     <script src="script.js"></script>
 </body>
 </html>
