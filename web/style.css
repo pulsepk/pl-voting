@@ -53,7 +53,7 @@ body {
 }
 
 .item3 {
-    padding-top: 5px;
+  padding-top: 5px;
   grid-column: 1 / span 3;
   grid-row: 2;
   width: 1000px;
@@ -64,6 +64,8 @@ body {
     font-size: 18px;
     color: #fffcfc;
 }
+
+
 
 .btn {
     background-image: linear-gradient(92.88deg, #455EB5 9.16%, #5643CC 43.89%, #673FD7 64.72%);
@@ -113,83 +115,129 @@ body {
   width: 400px; /* Adjust the container width as needed */
   margin: 0 auto; /* Center the container horizontally */
 }
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
+
+
+.table-container {
+  width: 100%; /* Adjust width as needed */
+  max-height: 400px; /* Set a max height that fits 8 rows */
+  overflow-y: auto; /* Enable vertical scrollbar */
+  border-radius: 10px; /* Optional: for rounded corners */
+  background-color: #1F2739; /* Match the table's background color */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: for shadow effect */
 }
 
 
-.blue { color: #185875; }
-.yellow { color: #FFF842; }
+.resultsTable {
+width: 100%; /* Full width of its container */
+border-collapse: collapse; /* Collapses borders for a clean look */
+margin-top: 0; /* Adds space above the table */
+background-color: #1F2739; /* Dark background for contrast */
+border-radius: 10px; /* Rounded corners */
+overflow: hidden; /* Ensures the border-radius clips the content */
+box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+}
+
 .resultsTable th h3 {
-    font-weight: bold;
-    font-size: 1.5em;
-  text-align: left;
-  color: #dadada;
+font-weight: 600; /* Slightly bolder font for headers */
+font-size: 18px; /* Larger font size for headers */
+color: #dadada; /* Soft white color for readability */
+margin: 0; /* Removes default margins */
+padding: 15px 20px; /* Spacious padding for visual comfort */
+background-color: #455EB5; /* Blue background for header */
+text-shadow: none; /* No text shadow for a cleaner look */
 }
 
 .resultsTable td {
-    font-weight: normal;
-    font-size: 1em;
-  -webkit-box-shadow: 0 2px 2px -2px #0E1119;
-     -moz-box-shadow: 0 2px 2px -2px #0E1119;
-          box-shadow: 0 2px 2px -2px #0E1119;
+font-weight: 400; /* Normal font weight for table data */
+font-size: 16px; /* Comfortable font size for reading */
+color: white; /* White text color for readability */
+padding: 15px 20px; /* Consistent padding for all cells */
+border-bottom: 1px solid #ffffff10; /* Subtle border for separation */
+box-shadow: none; /* No box shadow for a flatter design */
 }
 
-.resultsTable {
-    text-align: left;
-    overflow: hidden;
-    width: 80%;
-    margin: 0 auto;
-  display: table;
-  padding: 0 0 8em 0;
-}
-
-.resultsTable td, .resultsTable th {
-    padding-bottom: 2%;
-    padding-top: 2%;
-  padding-left:2%;  
-}
-
-/* Background-color of the odd rows */
+/* Background-color for odd and even rows for better readability */
 .resultsTable tr:nth-child(odd) {
-    background-color: #323C50;
+background-color: #323C50;
 }
 
-/* Background-color of the even rows */
 .resultsTable tr:nth-child(even) {
-    background-color: #2C3446;
+background-color: #2C3446;
 }
 
-.resultsTable th {
-    background-color: #1F2739;
-}
-
-.resultsTable td:first-child { color: #ff00f2; }
-
+/* Hover effects for rows */
 .resultsTable tr:hover {
-   background-color: #464A52;
--webkit-box-shadow: 0 6px 6px -6px #0E1119;
-     -moz-box-shadow: 0 6px 6px -6px #0E1119;
-          box-shadow: 0 6px 6px -6px #0E1119;
+background-color: #464A52; /* Darker background on hover */
+box-shadow: 0 6px 6px -6px #0E1119; /* Shadow effect for depth */
 }
 
+/* Hover effects for cells */
 .resultsTable td:hover {
-  background-color: #3c3ab1;
-  color: #070701;
-  font-weight: bold;
-  
-  box-shadow: #7F7C21 -1px 1px, #7F7C21 -2px 2px, #7F7C21 -3px 3px, #7F7C21 -4px 4px, #7F7C21 -5px 5px, #7F7C21 -6px 6px;
-  transform: translate3d(6px, -6px, 0);
-  
-  transition-delay: 0s;
-    transition-duration: 0.4s;
-    transition-property: all;
-  transition-timing-function: line;
+background-color: #3c3ab1; /* Highlight cell on hover */
+color: #070701; /* Dark color for contrast */
+font-weight: bold; /* Bold font for emphasis */
+box-shadow: #7F7C21 -1px 1px, #7F7C21 -2px 2px, #7F7C21 -3px 3px, #7F7C21 -4px 4px, #7F7C21 -5px 5px, #7F7C21 -6px 6px;
+transform: translate3d(6px, -6px, 0); /* Raised effect on hover */
+transition: all 0.4s ease; /* Smooth transition for hover effects */
 }
 
 @media (max-width: 800px) {
 .resultsTable td:nth-child(4),
 .resultsTable th:nth-child(4) { display: none; }
+}
+
+
+.radio-container {
+  color: white;
+  width: 90%;
+  max-height: 14em; 
+  overflow-y: auto;
+  margin-bottom: 1em;
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.radio-option {
+  margin-bottom: 0.5em;
+  display: flex;
+  align-items: center;
+}
+
+.radio-button {
+  margin-right: 0.5em;
+  cursor: pointer;
+  
+}
+
+#IdForm {
+    
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 90%;
+  max-width: 400px; /* Adjust based on your preference */
+}
+
+#IdForm label {
+  display: block;
+  font-size: 16px;
+  color: #333333;
+  margin-bottom: 10px;
+}
+
+#IdForm input[type="number"] {
+  width: 90%;
+  padding: 10px;
+  margin-bottom: 20px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 16px;
+}
+.Reset-form {
+  display: flex;
+  justify-content: center; /* Horizontally center the content */
+  align-items: center; /* Vertically center the content */
+  height: 20%; /* Full height of the container */
+  padding: 20px;
 }

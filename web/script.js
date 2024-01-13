@@ -13,42 +13,31 @@ window.addEventListener("message", (event) => {
         const radioButtonsDiv = document.getElementById('radioButtons');
 
         if (radioButtonsDiv) {
-            // Clear any existing content in the radio buttons div
-            radioButtonsDiv.innerHTML = '';
+    radioButtonsDiv.innerHTML = ''; // Clear any existing content
 
-            // Loop through the candidates and create radio buttons
-            candidates.forEach((candidate, index) => {
-                const candidateName = candidate.name;
-                const candidateParty = candidate.party;
-                // Create a radio button element
-                const radioDiv = document.createElement('div');
-                const radioButton = document.createElement('input');
-                radioButton.type = 'radio';
-                radioButton.name = 'candidateName'; // Set the same name for all radio buttons in the form
-                radioButton.value = `${candidateName},${candidateParty}`;
-                radioButton.id = `candidateRadio${index}`;
+    candidates.forEach((candidate, index) => {
+        const radioContainer = document.createElement('div');
+        radioContainer.classList.add('radio-option');
+        radioContainer.className = 'radio-container';
 
-                // Create a label for the radio button
-                const label = document.createElement('label');
-                label.htmlFor = `candidateRadio${index}`;
-                label.textContent = `Select ${candidateName} (${candidateParty})`;
+        const radioButton = document.createElement('input');
+        radioButton.type = 'radio';
+        radioButton.name = 'candidateName';
+        radioButton.value = `${candidate.name},${candidate.party}`;
+        radioButton.id = `candidateRadio${index}`;
+        radioButton.style.marginTop = '15px';
 
-                // Append the radio button and label to the radio buttons div
-                radioButtonsDiv.appendChild(label);
-                radioButtonsDiv.appendChild(radioButton);
-                radioButtonsDiv.appendChild(radioDiv);
-                const radioButtonContainer = document.getElementById('radioButtons');
+        const label = document.createElement('label');
+        label.htmlFor = `candidateRadio${index}`;
+        label.textContent = `Select ${candidate.name} (${candidate.party})`;
 
-                // Select all radio buttons within the container
-                const radioButtons = radioButtonContainer.querySelectorAll('input[type="radio"]');
+        radioContainer.appendChild(radioButton);
+        radioContainer.appendChild(label);
 
-                // Apply styles to each radio button
-                radioButtons.forEach((radioButton) => {
-                // Apply your custom CSS styles
-                radioButton.style.marginTop = '15px';
-                });
-            });
-        }
+        radioButtonsDiv.appendChild(radioContainer);
+    });
+}
+
     }
 });
 
@@ -75,12 +64,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 party: storedParty[0]
             };
             axios.post(`https://${GetParentResourceName()}/votesubmit`, postData)
-            .then((response) => {
-              
-            })
-            .catch((error) => {
-                console.error(error); 
-            });
+            
         document.getElementById("ui").style.display = "none";
         
         axios.post(`https://${GetParentResourceName()}/hideFrame`)
@@ -131,6 +115,7 @@ document.addEventListener("keydown", function(event) {
         document.getElementById("ui").style.display = "none";
         document.getElementById("admin").style.display = "none";
         document.getElementById("result").style.display = "none";
+        document.getElementById("Resetvote").style.display = "none";
         axios.post(`https://${GetParentResourceName()}/hideFrame`, {})
         .then(function (response) { 
         })
@@ -151,10 +136,26 @@ function resetvotes(){
 function endElection(){
     axios.post(`https://${GetParentResourceName()}/endElection`, {})
 }
+function resetSomeone(){
+    document.getElementById("admin").style.display = "none";
+    document.getElementById("Resetvote").style.display = "block";
+
+    const form = document.getElementById("IdForm");
+    form.removeEventListener('submit', handleFormSubmit);
+    form.addEventListener('submit', handleFormSubmit);
+}
+function handleFormSubmit(event) {
+    event.preventDefault();
+    const playerNumber = document.getElementById("playerNumber").value;
+    axios.post(`https://${GetParentResourceName()}/resetSomeonevote`, {
+        playerNumber: playerNumber
+    })
+}
 
 function exit(){
     document.getElementById("ui").style.display = "none";  
     document.getElementById("admin").style.display = "none";
+    document.getElementById("Resetvote").style.display = "none";
     axios.post(`https://${GetParentResourceName()}/hideFrame`, {})
         .then(function (response) { 
         })
@@ -164,5 +165,10 @@ function exit(){
 
 function gobackresults(){
     document.getElementById("result").style.display = "none";
+    document.getElementById("admin").style.display = "block";
+}
+
+function gobackmenu(){
+    document.getElementById("Resetvote").style.display = "none";
     document.getElementById("admin").style.display = "block";
 }

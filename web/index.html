@@ -6,7 +6,6 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://kit.fontawesome.com/f597c30ce2.js" crossorigin="anonymous"></script>
     <title>Election</title>
-    <title>Document</title>
     <link rel="stylesheet" type="text/css" href="style.css">
 
 </head>
@@ -53,6 +52,31 @@
                         <button class="btn" id="resultsButton">Results</button>
                         <button class="btn" onclick="endElection()">End Election</button>
                         <button class="btn" onclick="resetvotes()">Reset Everyone's Votes</button>
+                        <button class="btn" onclick="resetSomeone()">Reset Someone's Vote</button>
+                </div>
+            </div>  
+        </div>
+    </div>
+    <div id="Resetvote" style="display: none;">
+        <div class="grid-container">
+            <div class="grid-item item1">
+                <h1>Admin Panel</h1>
+            </div>
+            <div class="grid-item item2">
+                <button id="arrowButton" onclick="gobackmenu()">
+                    <i class="fa-solid fa-arrow-left fa-beat fa-2xl" style="color: #ffffff;"></i>
+                </button>
+            </div>
+            <div class="grid-item item3">
+                <div class="Reset-form">
+            <form id="IdForm">
+                <label for="playerNumber">Please Enter Player ID you want to reset:</label>
+                <input type="number" id="playerNumber" name="playerNumber" required>
+                <br>
+                <div class="row">
+                <button class="btn" type="submit" id="submit">Submit</button>
+                </div>
+            </form>
                 </div>
             </div>  
         </div>
@@ -68,7 +92,7 @@
                 </button>
             </div>
             <div class="grid-item item3">
-                <table id="resultsTable" class="resultsTable" style="width:90%">
+                <table id="resultsTable" class="resultsTable" style="width:100%">
                     <thead>
                         <tr>
                             <th><h3>Candidate Name:</h3></th>

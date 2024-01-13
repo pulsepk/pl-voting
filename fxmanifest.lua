@@ -13,11 +13,13 @@ games {
 ui_page 'web/index.html'
 
 shared_script {
+    '@ox_lib/init.lua',
     'config.lua',
     'locale/*.lua'
 }
 
 client_script {
+    'frameworkObject.lua',
     'client/client.lua',
     'client/clientopen.lua',
     '@PolyZone/client.lua',
@@ -26,6 +28,7 @@ client_script {
 
 }
 server_script {
+    'frameworkObject.lua',
     '@oxmysql/lib/MySQL.lua',
     'server/server.lua',
     'server/serveropen.lua'

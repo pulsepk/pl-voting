@@ -1,23 +1,25 @@
-local QBCore = exports['qb-core']:GetCoreObject()
+Object = nil
+
+Citizen.CreateThread(function()
+    Object = frameworkObject() 
+end)
 
 local function createPeds()
     if pedSpawned then return end
-
-        
-        local pedModel = `s_m_y_ammucity_01`
-
+        local pedModel = Config.pedModel
         RequestModel(pedModel)
         while not HasModelLoaded(pedModel) do
             Wait(0)
         end
-
-        entity = CreatePed(0, pedModel, 1704.06, 4924.68, 42.06-1, 51.33, true, false)
+        for _, coords in ipairs(Config.VotingBooths) do
+        local entity = CreatePed(0, pedModel, coords.x, coords.y, coords.z-1, coords.w, true, false)
         TaskStartScenarioInPlace(entity, "WORLD_HUMAN_COP_IDLES", 0, true)
         FreezeEntityPosition(entity, true)
         SetEntityInvincible(entity, true)
         SetBlockingOfNonTemporaryEvents(entity, true)
 
         if Config.UseTarget then
+            if Config.Target == 'qb' then
             exports['qb-target']:AddTargetEntity(entity, {
                 options = {
                     {
@@ -30,8 +32,21 @@ local function createPeds()
 
                 },
             },
-            distance = 2.0
+            distance = 1.5
             })
+            elseif Config.Target == 'ox' then
+            exports.ox_target:addLocalEntity(entity, {
+                {
+                    icon = 'fa-solid fa-coins',
+                    label = 'Open Voting Menu',
+                    onSelect = function(entity)
+                        TriggerEvent('pl-voting:showuitarget')
+                    end,
+                    distance = 1.5
+                }
+            })
+            end
+        end
         end
     pedSpawned = true
 end
@@ -81,6 +96,17 @@ if not Config.UseTarget then
                 TriggerEvent('cd_drawtextui:ShowUI', 'show', '[E] Vote')   
                 inZone = true
                 TriggerEvent('pl-voting:showui')
+            elseif Config.DrawText == 'ox' then
+                lib.showTextUI('[E] Vote', {
+                    position = "left",
+                    style = {
+                        borderRadius = 0,
+                        backgroundColor = '#000000',
+                        color = 'white'
+                    }
+                })
+                inZone = true
+                TriggerEvent('pl-voting:showui')
             end
         else
             if Config.DrawText == 'qb' then
@@ -88,6 +114,9 @@ if not Config.UseTarget then
                 inZone = false
             elseif Config.DrawText == 'cd' then
                 TriggerEvent('cd_drawtextui:ShowUI', 'show', '[E] Vote')   
+                inZone = false
+            elseif Config.DrawText == 'ox' then
+                lib.hideTextUI()
                 inZone = false
             end
         end
@@ -115,57 +144,53 @@ RegisterNetEvent('pl-voting:showui', function()
   while true do
       if not inZone then break end
       if IsControlJustReleased(0, 38) then
-            QBCore.Functions.TriggerCallback('voting:server:checkelectionstate', function(electionState)
+            Object.Functions.TriggerCallback('voting:server:checkelectionstate', function(electionState)
                 if electionState then
-                    QBCore.Functions.TriggerCallback('voting:server:checkIfVoted', function(hasVoted)
+                    Object.Functions.TriggerCallback('voting:server:checkIfVoted', function(hasVoted)
                         if not hasVoted then
                             SendNUIMessage({
                                 type = 'show_ui',  
                             })
                             SetNuiFocus(true, true)
                         else
-                            TriggerEvent('custom:notification','You have already voted.', 'error')
+                            TriggerEvent('custom:notification',Language["Notification"]["already_voted"], 'error')
                         end
                       end)
                 else
-                    TriggerEvent('custom:notification','The election are closed.', 'error')
+                    TriggerEvent('custom:notification',Language["Notification"]["election_closed"], 'error')
                 end
             end)
       end
       Wait(3)
   end
 end)
+
 RegisterNetEvent('pl-voting:showuitarget', function()
-       
-    QBCore.Functions.TriggerCallback('voting:server:checkelectionstate', function(electionState)
-    if electionState then
-        QBCore.Functions.TriggerCallback('voting:server:checkIfVoted', function(hasVoted)
-        if not hasVoted then
-        SendNUIMessage({
-        type = 'show_ui',  
-        })
-        SetNuiFocus(true, true)
-    else
-        TriggerEvent('custom:notification','You have already voted.', 'error')
-    end
-    end)
-    else
-    TriggerEvent('custom:notification','The election are closed.', 'error')
-    end
+    Object.Functions.TriggerCallback('voting:server:checkelectionstate', function(electionState)
+        if electionState then
+            Object.Functions.TriggerCallback('voting:server:checkIfVoted', function(hasVoted)
+            if not hasVoted then
+                SendNUIMessage({
+                type = 'show_ui',  
+                })
+                SetNuiFocus(true, true)
+            else
+                TriggerEvent('custom:notification',Language["Notification"]["already_voted"], 'error')
+                end
+            end)
+        else
+            TriggerEvent('custom:notification',Language["Notification"]["election_closed"], 'error')
+        end
     end)
 end)
 
 
-RegisterCommand('uiadmin', function()
-  TriggerEvent("ShowUiAdmin")
-  SetNuiFocus(true,true)
-end, false)
-
-RegisterNetEvent('ShowUiAdmin')
-AddEventHandler('ShowUiAdmin', function()
+RegisterNetEvent('pl-voting:ShowUiAdmin')
+AddEventHandler('pl-voting:ShowUiAdmin', function()
   SendNUIMessage({
       type = "ShowUiAdmin"
   })
+  SetNuiFocus(true,true)
 end)
 
 RegisterNetEvent('showUiEvent')
@@ -194,6 +219,11 @@ end)
 
 RegisterNUICallback('resetvotes',function(data,cb)
   TriggerServerEvent('pl-voting:resetsvotes')
+end)
+
+RegisterNUICallback('resetSomeonevote',function(data,cb)
+    local playerId = data.playerNumber
+    TriggerServerEvent('pl-voting:resetSomeonevote', playerId)
 end)
 
 RegisterNUICallback('endElection',function(data,cb)
