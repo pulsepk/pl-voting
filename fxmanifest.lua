@@ -4,7 +4,6 @@ description "Advanced Fivem Election Voting System"
 author "PulsePK https://discord.gg/yc94hR9kPx"
 version '1.0.0'
 
-lua54 'yes'
 
 
 ui_page 'web/index.html'
@@ -15,7 +14,7 @@ dependencies {
 
 
 shared_script {
-    '@ox_lib/init.lua',
+    '@ox_lib/init.lua', --Comment out if you are not using ox
     'config.lua',
 }
 
@@ -36,22 +35,5 @@ server_script {
 files {
     'web/index.html',
     'web/style.css',
-    'web/script.js',
-    'locales/*.json',
-    'electionstate.json'
+    'web/script.js'
 }
-
-escrow_ignore {
-    'client/bridge/qb.lua',
-    'client/bridge/esx.lua',
-    'server/bridge/qb.lua',
-    'server/bridge/esx.lua',
-    "client/clientopen.lua",
-    "server/serveropen.lua",
-    "config.lua",
-    "web/**",
-    'locales/*.json',
-    "electionstate.json",
-    "database.sql"
-}
-
