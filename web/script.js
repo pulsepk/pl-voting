@@ -13,31 +13,31 @@ window.addEventListener("message", (event) => {
         const radioButtonsDiv = document.getElementById('radioButtons');
 
         if (radioButtonsDiv) {
-    radioButtonsDiv.innerHTML = ''; // Clear any existing content
+            radioButtonsDiv.innerHTML = ''; // Clear any existing content
 
-    candidates.forEach((candidate, index) => {
-        const radioContainer = document.createElement('div');
-        radioContainer.classList.add('radio-option');
-        radioContainer.className = 'radio-container';
+            candidates.forEach((candidate, index) => {
+                const radioContainer = document.createElement('div');
+                radioContainer.classList.add('radio-option');
+                radioContainer.className = 'radio-containers';
 
-        const radioButton = document.createElement('input');
-        radioButton.type = 'radio';
-        radioButton.name = 'candidateName';
-        radioButton.value = `${candidate.name},${candidate.party}`;
-        radioButton.id = `candidateRadio${index}`;
-        radioButton.style.marginTop = '15px';
+                const radioButton = document.createElement('input');
+                radioButton.type = 'radio';
+                radioButton.name = 'candidateName';
+                radioButton.value = `${candidate.name},${candidate.party}`;
+                radioButton.id = `candidateRadio${index}`;
+                radioButton.style.marginTop = '15px';
+                radioButton.style.marginRight = '15px';
 
-        const label = document.createElement('label');
-        label.htmlFor = `candidateRadio${index}`;
-        label.textContent = `Select ${candidate.name} (${candidate.party})`;
+                const label = document.createElement('label');
+                label.htmlFor = `candidateRadio${index}`;
+                label.textContent = `Select ${candidate.name} (${candidate.party})`;
 
-        radioContainer.appendChild(radioButton);
-        radioContainer.appendChild(label);
+                radioContainer.appendChild(radioButton);
+                radioContainer.appendChild(label);
 
-        radioButtonsDiv.appendChild(radioContainer);
-    });
-}
-
+                radioButtonsDiv.appendChild(radioContainer);
+            });
+        }
     }
 });
 
@@ -116,6 +116,7 @@ document.addEventListener("keydown", function(event) {
         document.getElementById("admin").style.display = "none";
         document.getElementById("result").style.display = "none";
         document.getElementById("Resetvote").style.display = "none";
+        document.getElementById("deleterecord").style.display = "none";
         axios.post(`https://${GetParentResourceName()}/hideFrame`, {})
         .then(function (response) { 
         })
@@ -124,9 +125,14 @@ document.addEventListener("keydown", function(event) {
     }
 });
 
+function DeleteConfirm() {
+    document.getElementById("admin").style.display = "none";
+    document.getElementById("deleterecord").style.display = "block";
+}
 function deleteRecord() {
     axios.post(`https://${GetParentResourceName()}/deleteRecord`, {})
 }
+
 function startelection(){
     axios.post(`https://${GetParentResourceName()}/startelection`, {})
 }
@@ -156,11 +162,8 @@ function exit(){
     document.getElementById("ui").style.display = "none";  
     document.getElementById("admin").style.display = "none";
     document.getElementById("Resetvote").style.display = "none";
+    document.getElementById("deleterecord").style.display = "none";
     axios.post(`https://${GetParentResourceName()}/hideFrame`, {})
-        .then(function (response) { 
-        })
-        .catch(function (error) {
-        });  
 }
 
 function gobackresults(){
@@ -170,5 +173,10 @@ function gobackresults(){
 
 function gobackmenu(){
     document.getElementById("Resetvote").style.display = "none";
+    document.getElementById("admin").style.display = "block";
+}
+
+function gobackelection(){
+    document.getElementById("deleterecord").style.display = "none";
     document.getElementById("admin").style.display = "block";
 }

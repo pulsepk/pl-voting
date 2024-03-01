@@ -1,41 +1,57 @@
 fx_version "cerulean"
-
+games { "gta5" }
 description "Advanced Fivem Election Voting System"
 author "PulsePK https://discord.gg/yc94hR9kPx"
 version '1.0.0'
 
 lua54 'yes'
 
-games {
-    "gta5"
-}
 
 ui_page 'web/index.html'
+
+dependencies {
+    'ox_lib'
+}
+
 
 shared_script {
     '@ox_lib/init.lua',
     'config.lua',
-    'locale/*.lua'
 }
 
 client_script {
-    'frameworkObject.lua',
     'client/client.lua',
-    'client/clientopen.lua',
-    '@PolyZone/client.lua',
-	'@PolyZone/BoxZone.lua',
-    '@PolyZone/ComboZone.lua'
-
+    'client/bridge/qb.lua',
+    'client/bridge/esx.lua',
+    'client/clientopen.lua'
 }
 server_script {
-    'frameworkObject.lua',
     '@oxmysql/lib/MySQL.lua',
     'server/server.lua',
+    'server/bridge/qb.lua',
+    'server/bridge/esx.lua',
     'server/serveropen.lua'
 }
 
 files {
     'web/index.html',
     'web/style.css',
-    'web/script.js'
+    'web/script.js',
+    'locales/*.json',
+    'electionstate.json'
 }
+
+escrow_ignore {
+    'client/bridge/qb.lua',
+    'client/bridge/esx.lua',
+    'server/bridge/qb.lua',
+    'server/bridge/esx.lua',
+    "client/clientopen.lua",
+    "server/serveropen.lua",
+    "config.lua",
+    "web/**",
+    'locales/*.json',
+    "electionstate.json",
+    "database.sql"
+}
+

@@ -1,36 +1,34 @@
+lib.locale()
+
 Config = {}
 
 Config.Permissions = {"god", "admin", "mod"} --Player with this group are able to use the menu command
 
+Config.AdminLicense = { 
+    ['license:071516169a85fdc04c9df7ed0355499e626bad95'] = true, --Add Admin license here, Get it from the database in players table
+}
+
 Config.MenuCommand = 'election' --Election Management Menu, Only Admin with Config.Permissions can use it
 
-Config.pedModel = `s_m_y_ammucity_01` --Only works if Config.Target is enabled
+Config.Log = true
+
+Config.Debugpoly = false
 
 Config.Candidates = {
-    { name = "Candidate A", party= "A"},
-    { name = "Candidate B", party= "B"},
-    { name = "Candidate C", party= "C"},
-    { name = "Candidate D", party= "D"},
-    { name = "Candidate E", party= "E"},
+    { name = "John Doe", party= "Independent"},
+    { name = "Jane Smith", party= "Democratic Party"},
+    { name = "Michael Johnson", party= "Republican Party"},
+
 }
 
 Config.VotingBooths = {
     vector4(1704.15, 4924.82, 42.06, 56.58),
-    vector4(1695.5, 4931.69, 42.08, 318.94)
+    vector4(1702.29, 4922.7, 42.06, 234.73)
 }
 
-Config.Debugscript = true
-
-Config.Framework = 'qb' --qb
-
-Config.Notify = 'ox' --qb, ox, okok, custom
+Config.Notify = 'ox' --qb, ox, okok,esx, custom
 
 Config.DrawText = 'ox' --qb, cd, ox if Config.UseTarget is set to False
-
-Config.UseTarget = true --Set to true if you want to use target
-
-Config.Target = 'ox' --qb, ox
-
 
 Config.ServerAnnouncement = true -- This is will send a message to Chat for everyone
 

@@ -1,65 +1,6 @@
-Object = nil
 
-Citizen.CreateThread(function()
-    Object = frameworkObject() 
-end)
+function onPlayerLoaded()
 
-local function createPeds()
-    if pedSpawned then return end
-        local pedModel = Config.pedModel
-        RequestModel(pedModel)
-        while not HasModelLoaded(pedModel) do
-            Wait(0)
-        end
-        for _, coords in ipairs(Config.VotingBooths) do
-        local entity = CreatePed(0, pedModel, coords.x, coords.y, coords.z-1, coords.w, true, false)
-        TaskStartScenarioInPlace(entity, "WORLD_HUMAN_COP_IDLES", 0, true)
-        FreezeEntityPosition(entity, true)
-        SetEntityInvincible(entity, true)
-        SetBlockingOfNonTemporaryEvents(entity, true)
-
-        if Config.UseTarget then
-            if Config.Target == 'qb' then
-            exports['qb-target']:AddTargetEntity(entity, {
-                options = {
-                    {
-                    
-                    type = "client",
-                    event = "pl-voting:showuitarget",
-                    icon = 'fa-solid fa-coins',
-                    label = "Open Voting Menu",
-                    
-
-                },
-            },
-            distance = 1.5
-            })
-            elseif Config.Target == 'ox' then
-            exports.ox_target:addLocalEntity(entity, {
-                {
-                    icon = 'fa-solid fa-coins',
-                    label = 'Open Voting Menu',
-                    onSelect = function(entity)
-                        TriggerEvent('pl-voting:showuitarget')
-                    end,
-                    distance = 1.5
-                }
-            })
-            end
-        end
-        end
-    pedSpawned = true
-end
-
-local function deletePeds()
-    if not pedSpawned then return end
-
-        DeletePed(entity)
-    
-    pedSpawned = false
-end
-
-RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
     local after = {}
     for k, v in pairs(Config.Candidates) do
       after[#after + 1] = {
@@ -71,58 +12,61 @@ RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
     type = 'updateCandidates',
     candidates = after
     })
-    createPeds()
-end)
 
-if not Config.UseTarget then
-    CreateThread(function()
+end
+
+function onEnter(self)
+    if Config.DrawText == 'qb' then
+        exports['qb-core']:DrawText('[E] Vote', 'left')
+        inZone = true
+        TriggerEvent('pl-voting:showui')
+    elseif Config.DrawText == 'cd' then
+        TriggerEvent('cd_drawtextui:ShowUI', 'show', '[E] Vote')   
+        inZone = true
+        TriggerEvent('pl-voting:showui')
+    elseif Config.DrawText == 'ox' then
+        lib.showTextUI('[E] Vote', {
+            position = "left",
+            style = {
+                borderRadius = 0,
+                backgroundColor = '#000000',
+                color = 'white'
+            }
+        })
+        inZone = true
+        TriggerEvent('pl-voting:showui')
+    end
+end
+ 
+function onExit(self)
+    if Config.DrawText == 'qb' then
+        exports['qb-core']:HideText()
+        inZone = false
+    elseif Config.DrawText == 'cd' then
+        TriggerEvent('cd_drawtextui:ShowUI', 'show', '[E] Vote')   
+        inZone = false
+    elseif Config.DrawText == 'ox' then
+        lib.hideTextUI()
+        inZone = false
+    end
+end
+
+
+CreateThread(function()
         local zones = {}
         for k, v in pairs(Config.VotingBooths) do
-        zones[#zones + 1] = BoxZone:Create(vector3(v.x, v.y, v.z), 1.0, 1.0, {
-            name = 'votingZone',
-            heading = v.w,
-        })
-        end
-        votingComboZone = ComboZone:Create(zones, {
-        name = "votingBoothZones",
-        })
-        votingComboZone:onPlayerInOut(function(isPointInside, point)
-        if isPointInside then
-            if Config.DrawText == 'qb' then
-                exports['qb-core']:DrawText('[E] Vote', 'left')
-                inZone = true
-                TriggerEvent('pl-voting:showui')
-            elseif Config.DrawText == 'cd' then
-                TriggerEvent('cd_drawtextui:ShowUI', 'show', '[E] Vote')   
-                inZone = true
-                TriggerEvent('pl-voting:showui')
-            elseif Config.DrawText == 'ox' then
-                lib.showTextUI('[E] Vote', {
-                    position = "left",
-                    style = {
-                        borderRadius = 0,
-                        backgroundColor = '#000000',
-                        color = 'white'
-                    }
-                })
-                inZone = true
-                TriggerEvent('pl-voting:showui')
-            end
-        else
-            if Config.DrawText == 'qb' then
-                exports['qb-core']:HideText()
-                inZone = false
-            elseif Config.DrawText == 'cd' then
-                TriggerEvent('cd_drawtextui:ShowUI', 'show', '[E] Vote')   
-                inZone = false
-            elseif Config.DrawText == 'ox' then
-                lib.hideTextUI()
-                inZone = false
-            end
-        end
-        end)
-    end)
-end
+        zones[#zones + 1] = lib.zones.box({
+                name = "votingZone",
+                coords = vec3(v.x, v.y, v.z),
+                size = vec3(1.0, 1.5, 2.0),
+                rotation = 55.0,
+                debug = Config.Debugpoly,
+                onEnter = onEnter,
+                onExit = onExit
+                
+        })   
+    end
+end)
 
 RegisterNetEvent('pl-voting:startvoting',function()
     TriggerServerEvent('pl-voting:startelection')
@@ -144,44 +88,23 @@ RegisterNetEvent('pl-voting:showui', function()
   while true do
       if not inZone then break end
       if IsControlJustReleased(0, 38) then
-            Object.Functions.TriggerCallback('voting:server:checkelectionstate', function(electionState)
+            local electionState = lib.callback.await('voting:server:checkelectionstate', false)
                 if electionState then
-                    Object.Functions.TriggerCallback('voting:server:checkIfVoted', function(hasVoted)
+                    local hasVoted = lib.callback.await('voting:server:checkIfVoted', false)
                         if not hasVoted then
                             SendNUIMessage({
                                 type = 'show_ui',  
                             })
                             SetNuiFocus(true, true)
                         else
-                            TriggerEvent('custom:notification',Language["Notification"]["already_voted"], 'error')
+                            TriggerEvent('pl-voting:notification',locale("already_voted"), 'error')
                         end
-                      end)
                 else
-                    TriggerEvent('custom:notification',Language["Notification"]["election_closed"], 'error')
+                    TriggerEvent('pl-voting:notification',locale("election_closed"), 'error')
                 end
-            end)
       end
       Wait(3)
   end
-end)
-
-RegisterNetEvent('pl-voting:showuitarget', function()
-    Object.Functions.TriggerCallback('voting:server:checkelectionstate', function(electionState)
-        if electionState then
-            Object.Functions.TriggerCallback('voting:server:checkIfVoted', function(hasVoted)
-            if not hasVoted then
-                SendNUIMessage({
-                type = 'show_ui',  
-                })
-                SetNuiFocus(true, true)
-            else
-                TriggerEvent('custom:notification',Language["Notification"]["already_voted"], 'error')
-                end
-            end)
-        else
-            TriggerEvent('custom:notification',Language["Notification"]["election_closed"], 'error')
-        end
-    end)
 end)
 
 
@@ -253,29 +176,4 @@ AddEventHandler('pl-voting:sendResults', function(results)
             type = 'result',
             results = resultArray -- Send the array of results
         })
-end)
-
-
-if Config.Debugscript then
-    RegisterCommand("debugscript", function()
-        TriggerEvent('QBCore:Client:OnPlayerLoaded')
-    end)
-end
-
-
-AddEventHandler('onResourceStart', function(resourceName)
-    if GetCurrentResourceName() ~= resourceName then return end
-    if Config.UseTarget then
-    createPeds()
-    end
-end)
-
-AddEventHandler('onResourceStop', function(resourceName)
-    if GetCurrentResourceName() ~= resourceName then return end
-    deletePeds()
-end)
-
-RegisterNetEvent('QBCore:Client:OnPlayerUnload', function()
-    deletePeds()
-    PlayerData = nil
 end)

@@ -13,7 +13,7 @@ body {
   display: grid;
   gap: 0px;
   width: 1000px;
-    height: 600px;
+  height: 600px;
   background-color:#1F2739;
   padding: 0px;
   border-radius: 20px;
@@ -28,7 +28,7 @@ body {
   grid-column: 1 / span 2;
   grid-row: 1;
   width: 900px;
-  height:150px;
+  height:100px;
   text-align: center;
 }
 .item1 h1{
@@ -45,11 +45,12 @@ body {
 }
 
 
+
 .item2 {
   grid-column: 3;
   grid-row: 1 ;
   width: 100px;
-  height:150px;
+  height:100px;
 }
 
 .item3 {
@@ -57,12 +58,14 @@ body {
   grid-column: 1 / span 3;
   grid-row: 2;
   width: 1000px;
-  height: 450px;
+  height: 500px;
   text-align: center;
 }
 .item3 p{
-    font-size: 18px;
-    color: #fffcfc;
+  margin-left: 25px;
+  text-align: left;
+  font-size: 18px;
+  color: #fffcfc;
 }
 
 
@@ -186,16 +189,26 @@ transition: all 0.4s ease; /* Smooth transition for hover effects */
 .resultsTable th:nth-child(4) { display: none; }
 }
 
+.radio-containers {
+  text-align: left;
+  border: 0.5px solid 	rgb(88,88,88); /* Add a white border around the radio buttons */
+  padding: 10px; /* Add padding to create space between the border and the radio buttons */
+  border-radius: 10px; /* Add border radius to curve the corners */
+  margin-bottom: 15px; /* Add bottom margin for gap between containers */
+  margin-left: 20px;
+}
 
 .radio-container {
   color: white;
   width: 90%;
-  max-height: 14em; 
+  max-height: 18em; 
   overflow-y: auto;
   margin-bottom: 1em;
   border-radius: 10px;
   padding: 10px;
 }
+
+
 
 .radio-option {
   margin-bottom: 0.5em;
@@ -204,6 +217,7 @@ transition: all 0.4s ease; /* Smooth transition for hover effects */
 }
 
 .radio-button {
+  background-color: #1F2739;
   margin-right: 0.5em;
   cursor: pointer;
   
