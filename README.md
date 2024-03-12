@@ -6,7 +6,7 @@
 
 ###### Note #######
 You donot need to set framework it will automatically detects the framework you are using.
-If you have restarted the script during live server. The candidates info will not be shown to the player until they relog.
+
 ###### ############
 
 ###### ##############
@@ -22,3 +22,9 @@ Installation Guide:-
 
 
 For Support Join Discord https://discord.gg/P7NFTeqwQb
+
+
+###### ##############
+Change Log 1.0.1:-
+###### ##############
+Fixed a Bug where Candidate Name will not Appear after Script Restart

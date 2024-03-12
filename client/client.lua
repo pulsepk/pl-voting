@@ -1,18 +1,17 @@
 
 function onPlayerLoaded()
-
     local after = {}
     for k, v in pairs(Config.Candidates) do
-      after[#after + 1] = {
-          name = v.name,
-          party = v.party
-      }
+        after[#after + 1] = {
+            name = v.name,
+            party = v.party
+        }
     end
-    SendNUIMessage({
-    type = 'updateCandidates',
-    candidates = after
-    })
 
+    SendNUIMessage({
+        type = 'updateCandidates',
+        candidates = after
+    })
 end
 
 function onEnter(self)
@@ -176,4 +175,9 @@ AddEventHandler('pl-voting:sendResults', function(results)
             type = 'result',
             results = resultArray -- Send the array of results
         })
+end)
+
+RegisterNetEvent('pl-voting:ClearVotingMenu')
+AddEventHandler('pl-voting:ClearVotingMenu',function()
+	onPlayerLoaded()
 end)

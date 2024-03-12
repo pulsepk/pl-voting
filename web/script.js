@@ -8,10 +8,10 @@ window.addEventListener("message", (event) => {
     else if (data.type === "ShowUiAdmin") {
         document.getElementById("admin").style.display = "block";
     }
+
     else if (data.type === "updateCandidates") {
         const candidates = data.candidates;
         const radioButtonsDiv = document.getElementById('radioButtons');
-
         if (radioButtonsDiv) {
             radioButtonsDiv.innerHTML = ''; // Clear any existing content
 
@@ -34,7 +34,6 @@ window.addEventListener("message", (event) => {
 
                 radioContainer.appendChild(radioButton);
                 radioContainer.appendChild(label);
-
                 radioButtonsDiv.appendChild(radioContainer);
             });
         }

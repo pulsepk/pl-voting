@@ -84,7 +84,7 @@ end)
 
 
 function CheckScriptVersion()
-  local scriptVersion = '1.0.0'
+  local scriptVersion = '1.0.1'
   local latestVersion = nil
 
   PerformHttpRequest('https://api.github.com/repos/pulsepk/pl-voting-version/releases/latest', function(statusCode, data, headers)
@@ -94,7 +94,6 @@ function CheckScriptVersion()
               latestVersion = release.tag_name
           end
       end
-
       if latestVersion then
           if scriptVersion == latestVersion then
               print('Your script is up to date (v' .. scriptVersion .. ')')
@@ -109,6 +108,8 @@ end
 
 
 AddEventHandler('onServerResourceStart', function(resourceName)
+  Wait(500)
+  TriggerClientEvent('pl-voting:ClearVotingMenu',-1)
   local file = LoadResourceFile(GetCurrentResourceName(), '/electionstate.json')
   local data = json.decode(file)
   data.state = false
