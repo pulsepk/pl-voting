@@ -54,7 +54,4 @@ escrow_ignore {
     "electionstate.json",
     "database.sql"
 }
-<<<<<<< HEAD
 
-=======
->>>>>>> 2945f79d24a3e58bfa7d2ea27d4261b1d772a28d
