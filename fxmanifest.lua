@@ -2,7 +2,7 @@ fx_version "cerulean"
 games { "gta5" }
 description "Advanced Fivem Election Voting System"
 author "PulsePK https://discord.gg/yc94hR9kPx"
-version '1.0.1'
+version '1.0.2'
 
 lua54 'yes'
 
@@ -30,7 +30,8 @@ server_script {
     'server/server.lua',
     'server/bridge/qb.lua',
     'server/bridge/esx.lua',
-    'server/serveropen.lua'
+    'server/serveropen.lua',
+    'server/version.lua'
 }
 
 files {

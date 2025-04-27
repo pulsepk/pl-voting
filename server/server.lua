@@ -83,30 +83,6 @@ RegisterNetEvent('pl-voting:startelection', function()
 end)
 
 
-function CheckScriptVersion()
-  local scriptVersion = '1.0.1'
-  local latestVersion = nil
-
-  PerformHttpRequest('https://api.github.com/repos/pulsepk/pl-voting-version/releases/latest', function(statusCode, data, headers)
-      if statusCode == 200 then
-          local release = json.decode(data)
-          if release and release.tag_name then
-              latestVersion = release.tag_name
-          end
-      end
-      if latestVersion then
-          if scriptVersion == latestVersion then
-              print('Your script is up to date (v' .. scriptVersion .. ')')
-          else
-              print('New version available! Your version: v' .. scriptVersion .. ', Latest version: v' .. latestVersion)
-          end
-      else
-          print('Failed to check for updates.')
-      end
-  end, 'GET', '', { ['User-Agent'] = 'YourServerName' })
-end
-
-
 AddEventHandler('onServerResourceStart', function(resourceName)
   Wait(500)
   TriggerClientEvent('pl-voting:ClearVotingMenu',-1)
@@ -114,11 +90,6 @@ AddEventHandler('onServerResourceStart', function(resourceName)
   local data = json.decode(file)
   data.state = false
   SaveResourceFile(GetCurrentResourceName(), '/electionstate.json', json.encode(data), -1)
-  if Config.UpdateVersion then
-  if resourceName == GetCurrentResourceName() then
-      CheckScriptVersion()
-  end
-  end
 end)
 
 
