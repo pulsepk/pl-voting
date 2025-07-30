@@ -30,8 +30,7 @@ server_script {
     'server/server.lua',
     'server/bridge/qb.lua',
     'server/bridge/esx.lua',
-    'server/serveropen.lua',
-    'server/version.lua'
+    'server/serveropen.lua'
 }
 
 files {
