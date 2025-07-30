@@ -42,17 +42,3 @@ files {
     'electionstate.json'
 }
 
-escrow_ignore {
-    'client/bridge/qb.lua',
-    'client/bridge/esx.lua',
-    'server/bridge/qb.lua',
-    'server/bridge/esx.lua',
-    "client/clientopen.lua",
-    "server/serveropen.lua",
-    "config.lua",
-    "web/**",
-    'locales/*.json',
-    "electionstate.json",
-    "database.sql"
-}
-
