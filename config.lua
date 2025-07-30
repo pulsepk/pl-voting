@@ -2,6 +2,8 @@ lib.locale()
 
 Config = {}
 
+Config.WaterMark = true
+
 Config.Permissions = {"god", "admin", "mod"} --Player with this group are able to use the menu command
 
 Config.AdminLicense = { 
