@@ -1,5 +1,5 @@
 
-local Webhook = "https://discord.com/api/webhooks/1167391436862406676/_QzMxadzP-1oFAU6OpRJexjsa8mAofhe-eLKAyYjYcvJ48WHbMNhse5Gjutw9ufT2bgE"
+local Webhook = ""
 
 Log = function(message)
     if not Config.Log then
