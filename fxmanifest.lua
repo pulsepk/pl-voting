@@ -1,8 +1,8 @@
 fx_version "cerulean"
 games { "gta5" }
 description "Advanced Fivem Election Voting System"
-author "PulsePK https://discord.gg/yc94hR9kPx"
-version '1.0.2'
+author 'PulseScripts - pulsescripts.com'
+version '1.0.3'
 
 lua54 'yes'
 
