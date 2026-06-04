@@ -4,38 +4,36 @@ Config = {}
 
 Config.WaterMark = true
 
-Config.Permissions = {"god", "admin", "mod"} --Player with this group are able to use the menu command
+Config.Permissions = {"god", "admin", "mod"} -- ESX: groups that can use the admin menu
 
-Config.AdminLicense = { 
-    ['license:071516169a85fdc04c9df7ed0355499e626bad95'] = true, --Only For QBCore | Add Admin license here, Get it from the database in players table
+Config.AdminLicense = {
+    ['license:'] = true, -- QB/QBox: add license identifiers here
 }
 
-Config.MenuCommand = 'election' --Election Management Menu, Only Admin with Config.Permissions can use it
+Config.MenuCommand = 'election' -- Command to open the admin election panel
 
-Config.Log = true -- If you want to disable Discord Logs | Add your webhook in the serveropen.lua 
+-- Logging ----------------------------------------------------------------
+Config.Log        = true          -- Set false to disable logs
+Config.LogWebhook = ""            -- Discord webhook URL (required when LogType = 'discord')
+Config.LogType    = 'discord'     -- 'discord' | 'fivemanage' | 'fivemerr'
+-- ------------------------------------------------------------------------
 
-Config.Debugpoly = false --If you to see the Voting Booth Radius
+Config.Debugpoly = false -- Show voting booth zone outlines
 
 Config.Candidates = {
-    { name = "John Doe", party= "Independent Party"},
-    { name = "Jane Smith", party= "Democratic Party"},
-    { name = "Michael Johnson", party= "Republican Party"},
-
+    { name = "John Doe",        party = "Independent Party" },
+    { name = "Jane Smith",      party = "Democratic Party"  },
+    { name = "Michael Johnson", party = "Republican Party"  },
 }
 
 Config.VotingBooths = {
-    vector3(-541.22, -182.26, 38.23),  --Configured for Gabz Townhall | get it from here https://fivem.gabzv.com/
-    vector3(-542.09, -180.64, 38.23),   --Configured for Gabz Townhall | get it from here https://fivem.gabzv.com/
-    vector3(-542.84, -179.32, 38.23),   --Configured for Gabz Townhall | get it from here https://fivem.gabzv.com/
-    vector3(-534.77, -174.59, 38.23),   --Configured for Gabz Townhall | get it from here https://fivem.gabzv.com/
-    vector3(-533.94, -176.22, 38.23),   --Configured for Gabz Townhall | get it from here https://fivem.gabzv.com/
-    vector3(-533.15, -177.58, 38.23)    --Configured for Gabz Townhall | get it from here https://fivem.gabzv.com/
+    vector3(-541.22, -182.26, 38.23),
+    vector3(-542.09, -180.64, 38.23),
+    vector3(-542.84, -179.32, 38.23),
+    vector3(-534.77, -174.59, 38.23),
+    vector3(-533.94, -176.22, 38.23),
+    vector3(-533.15, -177.58, 38.23),
 }
 
-Config.Notify = 'ox' --qb, ox, okok,esx, custom
-
-Config.DrawText = 'ox' --qb, cd, ox
-
-Config.ServerAnnouncement = true -- This is will send a message to Chat for everyone
-
-Config.UpdateVersion = true -- This is disable the script version check on restart
+Config.ServerAnnouncement = true  -- Broadcast a chat message on election start/end
+Config.UpdateVersion      = true  -- Enable resource version check on start

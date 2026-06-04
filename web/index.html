@@ -3,130 +3,145 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <script src="https://kit.fontawesome.com/f597c30ce2.js" crossorigin="anonymous"></script>
     <title>Election</title>
-    <link rel="stylesheet" type="text/css" href="style.css">
-
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="ui" style="display: none;">
-        <div class="grid-container">
-            <div class="grid-item item1">
-                <h1>Elections Candidates</h1>
+
+    <!-- ── Voting Panel ──────────────────────────────────────────────────── -->
+    <div id="ui" class="panel hidden">
+        <div class="card">
+            <div class="card-header">
+                <div class="header-badge">ELECTION</div>
+                <h1>Cast Your Vote</h1>
+                <p class="header-sub">Select a candidate below and submit your vote</p>
+                <button class="close-btn" onclick="exit()" aria-label="Close">&#x2715;</button>
             </div>
-            <div class="grid-item item2">
-                <button id="arrowButton" onclick="exit()">
-                    <i class="fa-solid fa-arrow-left fa-beat fa-2xl" style="color: #ffffff;"></i>
-                </button>
-            </div>
-            <div class="grid-item item3">
-                <p>Please select anyone of the Following Candidates and click on submit</p>
-                <form id="myForm">
-                    <div id="radioButtons" class="radio-container">
-                    
-                    </div>
-                    <br>
-                    <div class="row">
-                    <button class="btn" type="submit" id="submit">Submit</button>
+            <div class="card-body">
+                <form id="myForm" autocomplete="off">
+                    <div id="radioButtons" class="candidate-list"></div>
+                    <div class="actions">
+                        <button class="btn btn-primary" type="submit">
+                            <span class="btn-icon">&#x2714;</span> Submit Vote
+                        </button>
                     </div>
                 </form>
-            </div>  
+            </div>
         </div>
     </div>
-    <div id="admin" style="display: none;">
-        <div class="grid-container">
-            <div class="grid-item item1">
-                <h1>Admin Panel</h1>
+
+    <!-- ── Admin Panel ───────────────────────────────────────────────────── -->
+    <div id="admin" class="panel hidden">
+        <div class="card">
+            <div class="card-header">
+                <div class="header-badge admin">ADMIN</div>
+                <h1>Election Control</h1>
+                <p class="header-sub">Manage the active election and player records</p>
+                <button class="close-btn" onclick="exit()" aria-label="Close">&#x2715;</button>
             </div>
-            <div class="grid-item item2">
-                <button id="arrowButton" onclick="exit()">
-                    <i class="fa-solid fa-arrow-left fa-beat fa-2xl" style="color: #ffffff;"></i>
-                </button>
-            </div>
-            <div class="grid-item item3">
-                <div class="button-container">
-                        <button class="btn" onclick="startelection()">Start Election</button>
-                        <button class="btn" onclick="DeleteConfirm()">Delete All Records</button>
-                        <button class="btn" id="resultsButton">Results</button>
-                        <button class="btn" onclick="endElection()">End Election</button>
-                        <button class="btn" onclick="resetvotes()">Reset Everyone's Votes</button>
-                        <button class="btn" onclick="resetSomeone()">Reset Someone's Vote</button>
+            <div class="card-body">
+                <div class="admin-grid">
+                    <button class="admin-btn btn-green" onclick="startelection()">
+                        <span class="admin-icon">&#x25B6;</span>
+                        <span class="admin-label">Start Election</span>
+                    </button>
+                    <button class="admin-btn btn-red" onclick="endElection()">
+                        <span class="admin-icon">&#x25A0;</span>
+                        <span class="admin-label">End Election</span>
+                    </button>
+                    <button class="admin-btn btn-indigo" id="resultsButton">
+                        <span class="admin-icon">&#x25A3;</span>
+                        <span class="admin-label">View Results</span>
+                    </button>
+                    <button class="admin-btn btn-amber" onclick="resetvotes()">
+                        <span class="admin-icon">&#x21BA;</span>
+                        <span class="admin-label">Reset All Votes</span>
+                    </button>
+                    <button class="admin-btn btn-orange" onclick="resetSomeone()">
+                        <span class="admin-icon">&#x1F464;</span>
+                        <span class="admin-label">Reset Player Vote</span>
+                    </button>
+                    <button class="admin-btn btn-crimson" onclick="DeleteConfirm()">
+                        <span class="admin-icon">&#x1F5D1;</span>
+                        <span class="admin-label">Delete Records</span>
+                    </button>
                 </div>
-            </div>  
+            </div>
         </div>
     </div>
-    <div id="deleterecord" style="display: none;">
-        <div class="grid-container">
-            <div class="grid-item item1">
-                <h1>Admin Panel</h1>
+
+    <!-- ── Delete Confirmation ───────────────────────────────────────────── -->
+    <div id="deleterecord" class="panel hidden">
+        <div class="card card-sm">
+            <div class="card-header">
+                <div class="header-badge danger">WARNING</div>
+                <h1>Delete All Records?</h1>
+                <button class="close-btn" onclick="gobackelection()" aria-label="Back">&#x2190;</button>
             </div>
-            <div class="grid-item item2">
-                <button id="arrowButton" onclick="gobackelection()">
-                    <i class="fa-solid fa-arrow-left fa-beat fa-2xl" style="color: #ffffff;"></i>
-                </button>
-            </div>
-            <div class="grid-item item3">
-                <p style="text-align: center;">
-                    Are you sure you want to do this? It will delete the entire election results.
+            <div class="card-body card-body-center">
+                <p class="warn-text">
+                    This will permanently erase all election results and vote counts.
+                    This action cannot be undone.
                 </p>
-                <br>
-                <div class="row">
-                <button class="btn" type="submit" id="submit" onclick="deleteRecord()">Delete</button>
+                <div class="actions actions-center">
+                    <button class="btn btn-outline" onclick="gobackelection()">Cancel</button>
+                    <button class="btn btn-danger"  onclick="deleteRecord()">Delete All</button>
                 </div>
-            </div>  
+            </div>
         </div>
     </div>
-    <div id="Resetvote" style="display: none;">
-        <div class="grid-container">
-            <div class="grid-item item1">
-                <h1>Admin Panel</h1>
+
+    <!-- ── Reset Player Vote ─────────────────────────────────────────────── -->
+    <div id="Resetvote" class="panel hidden">
+        <div class="card card-sm">
+            <div class="card-header">
+                <h1>Reset Player Vote</h1>
+                <p class="header-sub">Enter the player's server ID</p>
+                <button class="close-btn" onclick="gobackmenu()" aria-label="Back">&#x2190;</button>
             </div>
-            <div class="grid-item item2">
-                <button id="arrowButton" onclick="gobackmenu()">
-                    <i class="fa-solid fa-arrow-left fa-beat fa-2xl" style="color: #ffffff;"></i>
-                </button>
+            <div class="card-body card-body-center">
+                <form id="IdForm" autocomplete="off">
+                    <div class="input-group">
+                        <label for="playerNumber">Player Server ID</label>
+                        <input type="number" id="playerNumber" name="playerNumber"
+                               placeholder="e.g. 42" min="1" required>
+                    </div>
+                    <div class="actions actions-center">
+                        <button class="btn btn-outline" type="button" onclick="gobackmenu()">Cancel</button>
+                        <button class="btn btn-primary" type="submit">Reset Vote</button>
+                    </div>
+                </form>
             </div>
-            <div class="grid-item item3">
-                <div class="Reset-form">
-            <form id="IdForm">
-                <label for="playerNumber">Please Enter Player ID you want to reset:</label>
-                <input type="number" id="playerNumber" name="playerNumber" required>
-                <br>
-                <div class="row">
-                <button class="btn" type="submit" id="submit">Submit</button>
-                </div>
-            </form>
-                </div>
-            </div>  
         </div>
     </div>
-    <div id="result" style="display: none;">
-        <div class="grid-container">
-            <div class="grid-item item1">
+
+    <!-- ── Election Results ──────────────────────────────────────────────── -->
+    <div id="result" class="panel hidden">
+        <div class="card">
+            <div class="card-header">
+                <div class="header-badge result">RESULTS</div>
                 <h1>Election Results</h1>
+                <p class="header-sub">Live vote tally — sorted by votes</p>
+                <button class="close-btn" onclick="gobackresults()" aria-label="Back">&#x2190;</button>
             </div>
-            <div class="grid-item item2">
-                <button id="arrowButton" onclick="gobackresults()">
-                    <i class="fa-solid fa-arrow-left fa-beat fa-2xl" style="color: #ffffff;"></i>
-                </button>
+            <div class="card-body">
+                <div class="table-wrap">
+                    <table id="resultsTable" class="results-table">
+                        <thead>
+                            <tr>
+                                <th class="col-rank">#</th>
+                                <th>Candidate</th>
+                                <th>Party</th>
+                                <th class="col-votes">Votes</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
             </div>
-            <div class="grid-item item3">
-                <table id="resultsTable" class="resultsTable" style="width:100%">
-                    <thead>
-                        <tr>
-                            <th><h3>Candidate Name:</h3></th>
-                            <th><h3>Party:</h3></th>
-                            <th><h3>Votes:</h3></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                      
-                    </tbody>
-                </table>
-            </div>  
         </div>
     </div>
+
     <script src="script.js"></script>
 </body>
 </html>

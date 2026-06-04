@@ -1,128 +1,127 @@
-
-local Webhook = ""
-
-Log = function(message)
-    if not Config.Log then
-
-        return
-    end
-    PerformHttpRequest(Webhook, function(err, text, headers) end, 'POST', json.encode({
-        username = 'PL Election',
-        embeds = {{
-            ["color"] = 16711680,
-            ["author"] = {
-                ["name"] = "PL Logs",
-                ["icon_url"] = "https://cdn.discordapp.com/attachments/1167388112251535441/1198745389856198786/pulse-scriptslogo.webp"
-            },
-            ["title"] = 'Election Logs',
-            ["description"] = message
-        }}, 
-        avatar_url = 'https://cdn.discordapp.com/attachments/1167388112251535441/1198745389856198786/pulse-scriptslogo.webp'
-    }), {
-        ['Content-Type'] = 'application/json'
-    })
-end
+-- ── Chat announcement ────────────────────────────────────────────────────────
 
 RegisterNetEvent('pl-voting:chatAnnouncement')
-AddEventHandler('pl-voting:chatAnnouncement',function(msg)
+AddEventHandler('pl-voting:chatAnnouncement', function(msg)
     TriggerClientEvent('chat:addMessage', -1, {
-        color = { 255, 0, 0},
+        color     = { 255, 0, 0 },
         multiline = true,
-        args = {"Announcement", msg}
+        args      = { 'Announcement', msg },
     })
 end)
 
+-- ── Admin permission callback (used by client command) ───────────────────────
+
 lib.callback.register('pl-voting:checkplayergroup', function(source)
-    
-    if GetResourceState('qb-core') == 'started' then
-        for license, _ in pairs(Config.AdminLicense) do
-	    	if getPlayerLicense(source) == license then
-	    		return true 
-	    	end
-	    end
-	    return false
-    else
-        local xPlayer = GetPlayerAdmin(source)
-        for k,v in ipairs(Config.Permissions) do
-	    	if xPlayer.getGroup() == v then 
-	    		return true 
-	    	end
-	    end
-	    return false
-    end
+    return isAdmin(source)
 end)
+
+-- ── Vote casting ─────────────────────────────────────────────────────────────
 
 RegisterNetEvent('voting:server:castVote', function(data)
     local src = source
-    local cid = getPlayerIdentifier(src)
-    if GetResourceState('qb-core') == 'started' then
-      MySQL.update('UPDATE players SET hasvoted = ? WHERE citizenid = ?', {1, cid})
-    else
-      MySQL.update('UPDATE users SET hasvoted = ? WHERE identifier = ?', {1, cid})
+
+    -- Basic input validation
+    if type(data) ~= 'table' or type(data.vote) ~= 'string' or type(data.party) ~= 'string' then
+        TriggerClientEvent('pl-voting:notification', src, 'Invalid vote data.', 'error')
+        return
     end
-    local result = MySQL.Sync.fetchAll('SELECT votes FROM election WHERE name = ?', { json.encode(data.vote) })
-    if not result[1] then
-        MySQL.insert('INSERT INTO election (name, party, votes) VALUES (?, ?, ?)',{ json.encode(data.vote), json.encode(data.party), 1 })
-        TriggerClientEvent('pl-voting:notification', src, locale("successfully_voted"), 'success')
-        Log('**Name:** '..getPlayerName(src)..'\n**Identifier:** '..cid..' \n has voted for'.. json.encode(data.vote) ..'')
-    else
-        MySQL.update("UPDATE election SET votes=? WHERE name=?;", { result[1].votes+1, json.encode(data.vote) })
-        TriggerClientEvent('pl-voting:notification', src, locale("successfully_voted"), 'success')
-        Log('**Name:** '..getPlayerName(src)..'\n**Identifier:** '..cid..' \n has voted for'.. json.encode(data.vote) ..'')
+
+    -- Server-side election state check (prevents console exploits)
+    local file  = LoadResourceFile(GetCurrentResourceName(), '/electionstate.json')
+    local state = json.decode(file)
+    if not state or not state.state then
+        TriggerClientEvent('pl-voting:notification', src, locale('election_closed'), 'error')
+        return
     end
-end)
-  
-  
-  RegisterNetEvent('pl-voting:resetsvotes', function()
-    local src = source
-    local Identifier = getPlayerLicense(src)
-    if GetResourceState('qb-core') == 'started' then
-      MySQL.Async.execute('UPDATE players SET hasvoted = 0 WHERE hasvoted = 1', {}, function(rowsChanged)
-          TriggerClientEvent('pl-voting:notification', src, locale("reset_player_status"), 'success')
-          Log('All players voting status has been reset successfully by '.. getPlayerName(src)..'\n**Identifier:**'..Identifier..'')
-      end)
+
+    local cid = exports['pl_lib']:GetPlayerIdentifier(src)
+    local fw  = exports['pl_lib']:GetFramework()
+
+    -- Server-side duplicate-vote check
+    local hasVoted
+    if fw == 'qb' or fw == 'qbox' then
+        hasVoted = MySQL.Sync.fetchScalar('SELECT hasvoted FROM players WHERE citizenid = ? LIMIT 1', { cid })
     else
-      MySQL.Async.execute('UPDATE users SET hasvoted = 0 WHERE hasvoted = 1', {}, function(rowsChanged)
-        TriggerClientEvent('pl-voting:notification', src, locale("reset_player_status"), 'success')
-        Log('All players voting status has been reset successfully by '.. getPlayerName(src)..'\n**Identifier:**'..Identifier..'')
-      end)
+        hasVoted = MySQL.Sync.fetchScalar('SELECT hasvoted FROM users WHERE identifier = ? LIMIT 1', { cid })
     end
-  end)
-  
-  
-RegisterNetEvent('pl-voting:resetSomeonevote', function(playerId)
-    local src = source
-    local playerID = tonumber(playerId)
-    local player = getPlayerIdentifier(playerID)
-    if player then
-      local cid = player
-      if GetResourceState('qb-core') == 'started' then
-      MySQL.Async.execute('UPDATE players SET hasvoted = 0 WHERE citizenid = @citizenid AND hasvoted = 1', {
-          ['@citizenid'] = cid
-      }, function(rowsChanged)
-          if rowsChanged > 0 then
-              TriggerClientEvent('pl-voting:notification', src, locale("player_voting_status"), 'success')
-              TriggerClientEvent('pl-voting:notification', playerID, locale("your_voting_status"), 'success')
-              Log('**Name:**'..getPlayerName(src)..'\n has reset vote of ' ..getPlayerName(playerID) .. '')
-          else
-              TriggerClientEvent('pl-voting:notification', src, locale("no_voting_status"), 'error')
-          end
-      end)
-      else
-        MySQL.Async.execute('UPDATE users SET hasvoted = 0 WHERE identifier = @identifier AND hasvoted = 1', {
-          ['@identifier'] = cid
-      }, function(rowsChanged)
-          if rowsChanged > 0 then
-              TriggerClientEvent('pl-voting:notification', src, locale("player_voting_status"), 'success')
-              TriggerClientEvent('pl-voting:notification', playerID, locale("your_voting_status"), 'success')
-              Log('**Name:**'..getPlayerName(src)..'\n has reset vote of ' ..getPlayerName(playerID) .. '')
-          else
-              TriggerClientEvent('pl-voting:notification', src, locale("no_voting_status"), 'error')
-          end
-      end)
-      end
+    if hasVoted == 1 then
+        TriggerClientEvent('pl-voting:notification', src, locale('already_voted'), 'error')
+        return
+    end
+
+    -- Mark player as voted
+    if fw == 'qb' or fw == 'qbox' then
+        MySQL.update('UPDATE players SET hasvoted = 1 WHERE citizenid = ?', { cid })
     else
-        TriggerClientEvent('pl-voting:notification', src, locale("couldnot_find_id"), 'error')
+        MySQL.update('UPDATE users SET hasvoted = 1 WHERE identifier = ?', { cid })
     end
+
+    -- Record the vote (names stored plainly, not double-encoded)
+    local existing = MySQL.Sync.fetchAll('SELECT votes FROM election WHERE name = ?', { data.vote })
+    if not existing[1] then
+        MySQL.insert('INSERT INTO election (name, party, votes) VALUES (?, ?, ?)', { data.vote, data.party, 1 })
+    else
+        MySQL.update('UPDATE election SET votes = ? WHERE name = ?', { existing[1].votes + 1, data.vote })
+    end
+
+    TriggerClientEvent('pl-voting:notification', src, locale('successfully_voted'), 'success')
+    logAction('**' .. exports['pl_lib']:GetPlayerName(src) .. '** (`' .. cid .. '`) voted for **' .. data.vote .. '**')
 end)
 
+-- ── Reset all votes ──────────────────────────────────────────────────────────
+
+RegisterNetEvent('pl-voting:resetsvotes', function()
+    local src = source
+    if not isAdmin(src) then
+        TriggerClientEvent('pl-voting:notification', src, locale('dont_have_permission'), 'error')
+        return
+    end
+    local fw = exports['pl_lib']:GetFramework()
+    local query = (fw == 'qb' or fw == 'qbox')
+        and 'UPDATE players SET hasvoted = 0 WHERE hasvoted = 1'
+        or  'UPDATE users SET hasvoted = 0 WHERE hasvoted = 1'
+    MySQL.Async.execute(query, {}, function()
+        TriggerClientEvent('pl-voting:notification', src, locale('reset_player_status'), 'success')
+        logAction('All voting statuses reset by **' .. exports['pl_lib']:GetPlayerName(src) ..
+                  '**\n**Identifier:** ' .. getPlayerLicense(src))
+    end)
+end)
+
+-- ── Reset a single player's vote ─────────────────────────────────────────────
+
+RegisterNetEvent('pl-voting:resetSomeonevote', function(playerId)
+    local src      = source
+    if not isAdmin(src) then
+        TriggerClientEvent('pl-voting:notification', src, locale('dont_have_permission'), 'error')
+        return
+    end
+    local playerID = tonumber(playerId)
+    if not playerID then
+        TriggerClientEvent('pl-voting:notification', src, locale('couldnot_find_id'), 'error')
+        return
+    end
+    local cid = exports['pl_lib']:GetPlayerIdentifier(playerID)
+    if not cid then
+        TriggerClientEvent('pl-voting:notification', src, locale('couldnot_find_id'), 'error')
+        return
+    end
+    local fw = exports['pl_lib']:GetFramework()
+    local query, params
+    if fw == 'qb' or fw == 'qbox' then
+        query  = 'UPDATE players SET hasvoted = 0 WHERE citizenid = @id AND hasvoted = 1'
+        params = { ['@id'] = cid }
+    else
+        query  = 'UPDATE users SET hasvoted = 0 WHERE identifier = @id AND hasvoted = 1'
+        params = { ['@id'] = cid }
+    end
+    MySQL.Async.execute(query, params, function(rows)
+        if rows > 0 then
+            TriggerClientEvent('pl-voting:notification', src,      locale('player_voting_status'), 'success')
+            TriggerClientEvent('pl-voting:notification', playerID, locale('your_voting_status'),   'success')
+            logAction('**' .. exports['pl_lib']:GetPlayerName(src) .. '** reset the vote of **' ..
+                      exports['pl_lib']:GetPlayerName(playerID) .. '**')
+        else
+            TriggerClientEvent('pl-voting:notification', src, locale('no_voting_status'), 'error')
+        end
+    end)
+end)

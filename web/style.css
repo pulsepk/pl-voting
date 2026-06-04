@@ -1,257 +1,425 @@
 @charset "UTF-8";
-@import url(https://fonts.googleapis.com/css?family=Open+Sans:300,400,700);
+
+/* ── Reset & base ─────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
 body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: transparent;
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
-}
-.grid-container {
-  display: grid;
-  gap: 0px;
-  width: 1000px;
-  height: 600px;
-  background-color:#1F2739;
-  padding: 0px;
-  border-radius: 20px;
+    overflow: hidden;
+    color: #e2e8f0;
 }
 
-
-.grid-item {
-  padding: 0px;
+/* ── Panel overlay ────────────────────────────────────────────────────────── */
+.panel {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: panelIn 0.18s ease;
 }
 
-.item1 {
-  grid-column: 1 / span 2;
-  grid-row: 1;
-  width: 900px;
-  height:100px;
-  text-align: center;
-}
-.item1 h1{
-    color: white;
-    font-size: 36px;
-    margin: 5;
-    padding-left: 150px;
-}
-.item1 h2{
-    color: white;
-    font-size: 30px;
-    margin: 5;
-    padding-left: 150px;
+.hidden { display: none !important; }
+
+@keyframes panelIn {
+    from { opacity: 0; transform: scale(0.96) translateY(6px); }
+    to   { opacity: 1; transform: scale(1)    translateY(0);   }
 }
 
-
-
-.item2 {
-  grid-column: 3;
-  grid-row: 1 ;
-  width: 100px;
-  height:100px;
+/* ── Card ─────────────────────────────────────────────────────────────────── */
+.card {
+    background: #0f1117;
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 18px;
+    width: 540px;
+    max-height: 88vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.03),
+        0 20px 60px rgba(0, 0, 0, 0.7),
+        0 4px 16px  rgba(0, 0, 0, 0.4);
+    overflow: hidden;
 }
 
-.item3 {
-  padding-top: 5px;
-  grid-column: 1 / span 3;
-  grid-row: 2;
-  width: 1000px;
-  height: 500px;
-  text-align: center;
-}
-.item3 p{
-  margin-left: 25px;
-  text-align: left;
-  font-size: 18px;
-  color: #fffcfc;
+.card-sm { width: 420px; }
+
+/* ── Card header ──────────────────────────────────────────────────────────── */
+.card-header {
+    background: linear-gradient(160deg, #141829 0%, #181e30 100%);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 24px 28px 20px;
+    position: relative;
 }
 
+.header-badge {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.4px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin-bottom: 10px;
+    background: rgba(99, 102, 241, 0.18);
+    color: #818cf8;
+    border: 1px solid rgba(99, 102, 241, 0.3);
+}
 
+.header-badge.admin  { background: rgba(234, 179, 8, 0.12); color: #facc15; border-color: rgba(234,179,8,0.3); }
+.header-badge.danger { background: rgba(239, 68,  68, 0.12); color: #f87171; border-color: rgba(239,68,68,0.3); }
+.header-badge.result { background: rgba(34,  197, 94, 0.12); color: #4ade80; border-color: rgba(34,197,94,0.3); }
 
-.btn {
-    background-image: linear-gradient(92.88deg, #455EB5 9.16%, #5643CC 43.89%, #673FD7 64.72%);
+.card-header h1 {
+    font-size: 22px;
+    font-weight: 700;
+    color: #f1f5f9;
+    letter-spacing: -0.4px;
+}
+
+.header-sub {
+    margin-top: 5px;
+    font-size: 13px;
+    color: #64748b;
+}
+
+.close-btn {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    width: 32px;
+    height: 32px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 8px;
-    border-style: none;
-    box-sizing: border-box;
-    color: #FFFFFF;
+    color: #64748b;
+    font-size: 14px;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s, color 0.15s;
+}
+
+.close-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #e2e8f0;
+}
+
+/* ── Card body ────────────────────────────────────────────────────────────── */
+.card-body {
+    padding: 20px 24px 24px;
+    overflow-y: auto;
+    flex: 1;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255,255,255,0.1) transparent;
+}
+
+.card-body::-webkit-scrollbar          { width: 4px; }
+.card-body::-webkit-scrollbar-track    { background: transparent; }
+.card-body::-webkit-scrollbar-thumb    { background: rgba(255,255,255,0.1); border-radius: 4px; }
+
+.card-body-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 22px;
+}
+
+/* ── Candidate list ───────────────────────────────────────────────────────── */
+.candidate-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: 340px;
+    overflow-y: auto;
+    margin-bottom: 18px;
+    padding-right: 4px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255,255,255,0.08) transparent;
+}
+
+.candidate-list::-webkit-scrollbar       { width: 4px; }
+.candidate-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 4px; }
+
+/* Each candidate row — the <label> wraps the hidden radio + content */
+.candidate-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1.5px solid rgba(255, 255, 255, 0.06);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s, box-shadow 0.15s;
+}
+
+.candidate-card:hover {
+    background: rgba(99, 102, 241, 0.07);
+    border-color: rgba(99, 102, 241, 0.25);
+}
+
+.candidate-card.selected {
+    background: rgba(99, 102, 241, 0.12);
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
+}
+
+/* Hide the native radio; keep it in the DOM for form submission */
+.candidate-radio {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.18);
     flex-shrink: 0;
-    font-family: "Inter UI","SF Pro Display",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen,Ubuntu,Cantarell,"Open Sans","Helvetica Neue",sans-serif;
-    font-size: 17px;
-    font-weight: 500;
-    height: 4.3rem;
-    padding: 0 1.6rem;
-    text-align: center;
-    text-shadow: rgba(0, 0, 0, 0.25) 0 3px 8px;
-    transition: all .5s;
-    user-select: none;
-    -webkit-user-select: none;
-    touch-action: manipulation;
-  }
-  
-.btn:hover {
-    box-shadow: rgba(80, 63, 205, 0.5) 0 1px 30px;
-    transition-duration: .1s;
+    position: relative;
+    transition: border-color 0.15s;
 }
-  
-@media (min-width: 768px) {
+
+.candidate-radio:checked {
+    border-color: #6366f1;
+    background: #6366f1;
+}
+
+.candidate-radio:checked::after {
+    content: '';
+    display: block;
+    width: 6px;
+    height: 6px;
+    background: #fff;
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.candidate-info { flex: 1; }
+
+.candidate-name {
+    font-size: 15px;
+    font-weight: 600;
+    color: #e2e8f0;
+}
+
+.candidate-party {
+    font-size: 12px;
+    color: #64748b;
+    margin-top: 2px;
+}
+
+.candidate-badge {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 9px;
+    border-radius: 20px;
+    background: rgba(99, 102, 241, 0.15);
+    color: #818cf8;
+    border: 1px solid rgba(99, 102, 241, 0.2);
+    white-space: nowrap;
+}
+
+/* ── Actions row ─────────────────────────────────────────────────────────── */
+.actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.actions-center { justify-content: center; }
+
+/* ── Buttons ─────────────────────────────────────────────────────────────── */
 .btn {
-      padding: 0 2.6rem;
-}
-}
-#arrowButton{
-    background: transparent; /* Set the background to transparent */
-    border: 1px solid transparent;
-    margin-top: 20px;
-    justify-content: right;
-    font-size: 44px;
-    background-color:#1F2739;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 10px 22px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
     cursor: pointer;
-}
-.button-container {
-    padding-top: 20px;
-  display: grid;
-  grid-template-columns: repeat(2, 1fr); /* Create two equally sized columns */
-  gap: 20px; /* Adjust the gap between buttons as needed */
-  width: 400px; /* Adjust the container width as needed */
-  margin: 0 auto; /* Center the container horizontally */
+    border: none;
+    transition: transform 0.12s, box-shadow 0.12s, background 0.12s;
+    letter-spacing: 0.2px;
 }
 
+.btn-icon { font-size: 13px; }
 
-.table-container {
-  width: 100%; /* Adjust width as needed */
-  max-height: 400px; /* Set a max height that fits 8 rows */
-  overflow-y: auto; /* Enable vertical scrollbar */
-  border-radius: 10px; /* Optional: for rounded corners */
-  background-color: #1F2739; /* Match the table's background color */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: for shadow effect */
+.btn-primary {
+    background: linear-gradient(135deg, #6366f1, #7c3aed);
+    color: #fff;
+    box-shadow: 0 4px 16px rgba(99, 102, 241, 0.28);
 }
 
-
-.resultsTable {
-width: 100%; /* Full width of its container */
-border-collapse: collapse; /* Collapses borders for a clean look */
-margin-top: 0; /* Adds space above the table */
-background-color: #1F2739; /* Dark background for contrast */
-border-radius: 10px; /* Rounded corners */
-overflow: hidden; /* Ensures the border-radius clips the content */
-box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+.btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 22px rgba(99, 102, 241, 0.4);
 }
 
-.resultsTable th h3 {
-font-weight: 600; /* Slightly bolder font for headers */
-font-size: 18px; /* Larger font size for headers */
-color: #dadada; /* Soft white color for readability */
-margin: 0; /* Removes default margins */
-padding: 15px 20px; /* Spacious padding for visual comfort */
-background-color: #455EB5; /* Blue background for header */
-text-shadow: none; /* No text shadow for a cleaner look */
+.btn-danger {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(239, 68, 68, 0.25);
 }
 
-.resultsTable td {
-font-weight: 400; /* Normal font weight for table data */
-font-size: 16px; /* Comfortable font size for reading */
-color: white; /* White text color for readability */
-padding: 15px 20px; /* Consistent padding for all cells */
-border-bottom: 1px solid #ffffff10; /* Subtle border for separation */
-box-shadow: none; /* No box shadow for a flatter design */
+.btn-danger:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(239, 68, 68, 0.38);
 }
 
-/* Background-color for odd and even rows for better readability */
-.resultsTable tr:nth-child(odd) {
-background-color: #323C50;
+.btn-outline {
+    background: transparent;
+    color: #94a3b8;
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.resultsTable tr:nth-child(even) {
-background-color: #2C3446;
+.btn-outline:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: #e2e8f0;
 }
 
-/* Hover effects for rows */
-.resultsTable tr:hover {
-background-color: #464A52; /* Darker background on hover */
-box-shadow: 0 6px 6px -6px #0E1119; /* Shadow effect for depth */
+/* ── Admin grid ──────────────────────────────────────────────────────────── */
+.admin-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
 }
 
-/* Hover effects for cells */
-.resultsTable td:hover {
-background-color: #3c3ab1; /* Highlight cell on hover */
-color: #070701; /* Dark color for contrast */
-font-weight: bold; /* Bold font for emphasis */
-box-shadow: #7F7C21 -1px 1px, #7F7C21 -2px 2px, #7F7C21 -3px 3px, #7F7C21 -4px 4px, #7F7C21 -5px 5px, #7F7C21 -6px 6px;
-transform: translate3d(6px, -6px, 0); /* Raised effect on hover */
-transition: all 0.4s ease; /* Smooth transition for hover effects */
+.admin-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 9px;
+    padding: 20px 10px;
+    border-radius: 14px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: transform 0.12s, background 0.15s, box-shadow 0.15s;
+    color: #fff;
 }
 
-@media (max-width: 800px) {
-.resultsTable td:nth-child(4),
-.resultsTable th:nth-child(4) { display: none; }
+.admin-icon  { font-size: 22px; line-height: 1; }
+.admin-label { letter-spacing: 0.1px; }
+
+.admin-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.35); }
+
+.btn-green   { background: rgba(34,  197, 94,  0.12); border-color: rgba(34,197,94,0.25);   color: #4ade80; }
+.btn-red     { background: rgba(239, 68,  68,  0.12); border-color: rgba(239,68,68,0.25);   color: #f87171; }
+.btn-indigo  { background: rgba(99,  102, 241, 0.12); border-color: rgba(99,102,241,0.25);  color: #818cf8; }
+.btn-amber   { background: rgba(234, 179, 8,   0.12); border-color: rgba(234,179,8,0.25);   color: #facc15; }
+.btn-orange  { background: rgba(249, 115, 22,  0.12); border-color: rgba(249,115,22,0.25);  color: #fb923c; }
+.btn-crimson { background: rgba(220, 38,  38,  0.12); border-color: rgba(220,38,38,0.25);   color: #f87171; }
+
+.btn-green:hover   { background: rgba(34,  197, 94,  0.22); }
+.btn-red:hover     { background: rgba(239, 68,  68,  0.22); }
+.btn-indigo:hover  { background: rgba(99,  102, 241, 0.22); }
+.btn-amber:hover   { background: rgba(234, 179, 8,   0.22); }
+.btn-orange:hover  { background: rgba(249, 115, 22,  0.22); }
+.btn-crimson:hover { background: rgba(220, 38,  38,  0.22); }
+
+/* ── Input group ─────────────────────────────────────────────────────────── */
+.input-group { width: 100%; text-align: left; }
+
+.input-group label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 8px;
 }
 
-.radio-containers {
-  text-align: left;
-  border: 0.5px solid 	rgb(88,88,88); /* Add a white border around the radio buttons */
-  padding: 10px; /* Add padding to create space between the border and the radio buttons */
-  border-radius: 10px; /* Add border radius to curve the corners */
-  margin-bottom: 15px; /* Add bottom margin for gap between containers */
-  margin-left: 20px;
+.input-group input {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 12px 16px;
+    color: #e2e8f0;
+    font-size: 15px;
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
 }
 
-.radio-container {
-  color: white;
-  width: 90%;
-  max-height: 18em; 
-  overflow-y: auto;
-  margin-bottom: 1em;
-  border-radius: 10px;
-  padding: 10px;
+.input-group input:focus {
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
 }
 
+.input-group input::placeholder { color: #334155; }
 
+/* Remove spin buttons on number input */
+.input-group input[type="number"]::-webkit-inner-spin-button,
+.input-group input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
+.input-group input[type="number"] { -moz-appearance: textfield; }
 
-.radio-option {
-  margin-bottom: 0.5em;
-  display: flex;
-  align-items: center;
+/* ── Warning text ────────────────────────────────────────────────────────── */
+.warn-text {
+    color: #94a3b8;
+    font-size: 14px;
+    line-height: 1.65;
+    text-align: center;
+    max-width: 310px;
 }
 
-.radio-button {
-  background-color: #1F2739;
-  margin-right: 0.5em;
-  cursor: pointer;
-  
+/* ── Results table ───────────────────────────────────────────────────────── */
+.table-wrap {
+    max-height: 360px;
+    overflow-y: auto;
+    border-radius: 12px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255,255,255,0.08) transparent;
 }
 
-#IdForm {
-    
-  background: #ffffff;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  width: 90%;
-  max-width: 400px; /* Adjust based on your preference */
+.table-wrap::-webkit-scrollbar       { width: 4px; }
+.table-wrap::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 4px; }
+
+.results-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
 }
 
-#IdForm label {
-  display: block;
-  font-size: 16px;
-  color: #333333;
-  margin-bottom: 10px;
+.results-table thead th {
+    background: rgba(99, 102, 241, 0.18);
+    color: #c7d2fe;
+    padding: 11px 16px;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.9px;
+    position: sticky;
+    top: 0;
+    z-index: 1;
 }
 
-#IdForm input[type="number"] {
-  width: 90%;
-  padding: 10px;
-  margin-bottom: 20px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  font-size: 16px;
+.col-rank  { width: 44px; text-align: center; }
+.col-votes { text-align: right; }
+
+.results-table tbody td {
+    padding: 13px 16px;
+    color: #cbd5e1;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    transition: background 0.1s;
 }
-.Reset-form {
-  display: flex;
-  justify-content: center; /* Horizontally center the content */
-  align-items: center; /* Vertically center the content */
-  height: 20%; /* Full height of the container */
-  padding: 20px;
-}
+
+.results-table tbody td.col-rank  { text-align: center; font-weight: 700; color: #475569; }
+.results-table tbody td.col-votes { text-align: right;  font-weight: 700; color: #a5b4fc; }
+
+.results-table tbody tr:hover td { background: rgba(255, 255, 255, 0.025); }
+
+/* Top-3 medal colours */
+.results-table tbody tr:nth-child(1) td.col-rank { color: #fbbf24; font-size: 17px; }
+.results-table tbody tr:nth-child(2) td.col-rank { color: #94a3b8; font-size: 17px; }
+.results-table tbody tr:nth-child(3) td.col-rank { color: #b45309; font-size: 17px; }

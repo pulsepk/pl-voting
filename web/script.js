@@ -1,181 +1,204 @@
+'use strict';
 
-window.addEventListener("message", (event) => {
-    var data = event.data;
+// ── NUI helper — replaces axios with native fetch ─────────────────────────
+function postNUI(endpoint, data) {
+    return fetch(`https://${GetParentResourceName()}/${endpoint}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data ?? {}),
+    }).catch(() => {});
+}
 
-    if (data.type === "show_ui") {
-        document.getElementById("ui").style.display = "block";
+// ── Panel management ──────────────────────────────────────────────────────
+const PANEL_IDS = ['ui', 'admin', 'deleterecord', 'Resetvote', 'result'];
+
+function showPanel(id) {
+    PANEL_IDS.forEach(pid => {
+        const el = document.getElementById(pid);
+        if (el) el.classList.add('hidden');
+    });
+    if (id) {
+        const el = document.getElementById(id);
+        if (el) el.classList.remove('hidden');
     }
-    else if (data.type === "ShowUiAdmin") {
-        document.getElementById("admin").style.display = "block";
-    }
+}
 
-    else if (data.type === "updateCandidates") {
-        const candidates = data.candidates;
-        const radioButtonsDiv = document.getElementById('radioButtons');
-        if (radioButtonsDiv) {
-            radioButtonsDiv.innerHTML = ''; // Clear any existing content
+// ── Medal symbols for top-3 results ──────────────────────────────────────
+const MEDALS = ['🥇', '🥈', '🥉'];
 
-            candidates.forEach((candidate, index) => {
-                const radioContainer = document.createElement('div');
-                radioContainer.classList.add('radio-option');
-                radioContainer.className = 'radio-containers';
+// ── NUI message handler ───────────────────────────────────────────────────
+window.addEventListener('message', (event) => {
+    const data = event.data;
+    if (!data || !data.type) return;
 
-                const radioButton = document.createElement('input');
-                radioButton.type = 'radio';
-                radioButton.name = 'candidateName';
-                radioButton.value = `${candidate.name},${candidate.party}`;
-                radioButton.id = `candidateRadio${index}`;
-                radioButton.style.marginTop = '15px';
-                radioButton.style.marginRight = '15px';
+    if (data.type === 'show_ui') {
+        showPanel('ui');
 
-                const label = document.createElement('label');
-                label.htmlFor = `candidateRadio${index}`;
-                label.textContent = `Select ${candidate.name} (${candidate.party})`;
+    } else if (data.type === 'ShowUiAdmin') {
+        showPanel('admin');
 
-                radioContainer.appendChild(radioButton);
-                radioContainer.appendChild(label);
-                radioButtonsDiv.appendChild(radioContainer);
-            });
-        }
+    } else if (data.type === 'updateCandidates') {
+        buildCandidateList(data.candidates || []);
+
+    } else if (data.type === 'result') {
+        buildResultsTable(data.results || []);
+        showPanel('result');
     }
 });
 
+// ── Build candidate cards ─────────────────────────────────────────────────
+function buildCandidateList(candidates) {
+    const container = document.getElementById('radioButtons');
+    if (!container) return;
+    container.innerHTML = '';
 
-document.addEventListener('DOMContentLoaded', function() {
-    const form = document.getElementById('myForm');
-    const storedData = [];
-    const storedParty = []; // Add a variable to store the party
-    form.addEventListener('submit', function(e) {
-        e.preventDefault();
-        storedData.length = 0;
-        storedParty.length = 0;
-        const formData = new FormData(form);
-        const selectedCandidate = formData.get('candidateName');
-  
-        if (selectedCandidate) {
-            const [candidateName, candidateParty] = selectedCandidate.split(',');
-            storedData.push(candidateName);
-            storedParty.push(candidateParty);
-            // Clear the form input (optional)
-            form.reset();
-            const postData = {
-                vote: storedData[0],
-                party: storedParty[0]
-            };
-            axios.post(`https://${GetParentResourceName()}/votesubmit`, postData)
-            
-        document.getElementById("ui").style.display = "none";
-        
-        axios.post(`https://${GetParentResourceName()}/hideFrame`)
-        }
-    });
-    const resultsButton = document.getElementById('resultsButton');
+    candidates.forEach((candidate, index) => {
+        // Label acts as the clickable card
+        const label = document.createElement('label');
+        label.className = 'candidate-card';
+        label.htmlFor = `cand_${index}`;
 
-    // Add a click event listener to the Results button
-    resultsButton.addEventListener('click', function() {
-        axios.post(`https://${GetParentResourceName()}/Results`, {});
-    });
-    window.addEventListener("message", (event) => {
-        const data = event.data;
-    
-        if (data.type === "result") {
-            const results = data.results;
-    
-            // Get the table body element
-            const tableBody = document.querySelector("#resultsTable tbody");
-    
-            // Clear existing table rows
-            tableBody.innerHTML = "";
-    
-            // Iterate through the results and add rows to the table
-            results.forEach((result) => {
-                const { name, party,votes } = result;
-                
-                const row = document.createElement("tr");
-                row.innerHTML = `
-                    <td>${name}</td>
-                    <td>${party}</td>
-                    <td>${votes}</td>
-                `;
-                tableBody.appendChild(row);
-            });
-            document.getElementById("admin").style.display = "none";
-            document.getElementById("result").style.display = "block";  
-        }
-    });
-    
-});
+        // Hidden radio keeps standard form behaviour
+        const radio = document.createElement('input');
+        radio.type      = 'radio';
+        radio.className = 'candidate-radio';
+        radio.name      = 'candidateName';
+        // Use a safe separator that won't appear in names/parties
+        radio.value     = `${index}`;
+        radio.id        = `cand_${index}`;
+        radio.dataset.name  = candidate.name;
+        radio.dataset.party = candidate.party;
 
-
-
-
-document.addEventListener("keydown", function(event) {
-    if (event.key === "Escape") {
-        document.getElementById("ui").style.display = "none";
-        document.getElementById("admin").style.display = "none";
-        document.getElementById("result").style.display = "none";
-        document.getElementById("Resetvote").style.display = "none";
-        document.getElementById("deleterecord").style.display = "none";
-        axios.post(`https://${GetParentResourceName()}/hideFrame`, {})
-        .then(function (response) { 
-        })
-        .catch(function (error) {
+        radio.addEventListener('change', () => {
+            document.querySelectorAll('.candidate-card').forEach(c => c.classList.remove('selected'));
+            label.classList.add('selected');
         });
+
+        const info = document.createElement('div');
+        info.className = 'candidate-info';
+
+        const nameEl = document.createElement('div');
+        nameEl.className = 'candidate-name';
+        nameEl.textContent = candidate.name;   // textContent prevents XSS
+
+        const partyEl = document.createElement('div');
+        partyEl.className = 'candidate-party';
+        partyEl.textContent = candidate.party;
+
+        const badge = document.createElement('div');
+        badge.className = 'candidate-badge';
+        // Show only the first word of the party name as the badge label
+        badge.textContent = candidate.party.split(' ')[0];
+
+        info.appendChild(nameEl);
+        info.appendChild(partyEl);
+
+        label.appendChild(radio);
+        label.appendChild(info);
+        label.appendChild(badge);
+        container.appendChild(label);
+    });
+}
+
+// ── Build results table ───────────────────────────────────────────────────
+function buildResultsTable(results) {
+    const tbody = document.querySelector('#resultsTable tbody');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+
+    // Sort highest votes first
+    const sorted = [...results].sort((a, b) => Number(b.votes) - Number(a.votes));
+
+    sorted.forEach((result, index) => {
+        const row = document.createElement('tr');
+
+        const tdRank = document.createElement('td');
+        tdRank.className = 'col-rank';
+        tdRank.textContent = index < 3 ? MEDALS[index] : String(index + 1);
+
+        const tdName = document.createElement('td');
+        tdName.textContent = result.name;   // textContent prevents XSS
+
+        const tdParty = document.createElement('td');
+        tdParty.textContent = result.party;
+
+        const tdVotes = document.createElement('td');
+        tdVotes.className = 'col-votes';
+        tdVotes.textContent = result.votes;
+
+        row.appendChild(tdRank);
+        row.appendChild(tdName);
+        row.appendChild(tdParty);
+        row.appendChild(tdVotes);
+        tbody.appendChild(row);
+    });
+}
+
+// ── DOMContentLoaded: wire up forms ──────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+
+    // Vote submission form
+    const voteForm = document.getElementById('myForm');
+    voteForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const selected = voteForm.querySelector('input[name="candidateName"]:checked');
+        if (!selected) return;
+
+        const candidateName  = selected.dataset.name;
+        const candidateParty = selected.dataset.party;
+
+        postNUI('votesubmit', { vote: candidateName, party: candidateParty });
+        voteForm.reset();
+        document.querySelectorAll('.candidate-card').forEach(c => c.classList.remove('selected'));
+        showPanel(null);
+        postNUI('hideFrame');
+    });
+
+    // Results button in admin panel
+    const resultsBtn = document.getElementById('resultsButton');
+    if (resultsBtn) {
+        resultsBtn.addEventListener('click', () => postNUI('Results'));
     }
 });
 
-function DeleteConfirm() {
-    document.getElementById("admin").style.display = "none";
-    document.getElementById("deleterecord").style.display = "block";
-}
+// ── Keyboard: Escape closes all panels ───────────────────────────────────
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        showPanel(null);
+        postNUI('hideFrame');
+    }
+});
+
+// ── Admin actions ─────────────────────────────────────────────────────────
+function DeleteConfirm() { showPanel('deleterecord'); }
+
 function deleteRecord() {
-    axios.post(`https://${GetParentResourceName()}/deleteRecord`, {})
+    postNUI('deleteRecord');
+    showPanel('admin');
 }
 
-function startelection(){
-    axios.post(`https://${GetParentResourceName()}/startelection`, {})
-}
-function resetvotes(){
-    axios.post(`https://${GetParentResourceName()}/resetvotes`, {})
-}
-function endElection(){
-    axios.post(`https://${GetParentResourceName()}/endElection`, {})
-}
-function resetSomeone(){
-    document.getElementById("admin").style.display = "none";
-    document.getElementById("Resetvote").style.display = "block";
+function startelection() { postNUI('startelection'); }
+function resetvotes()    { postNUI('resetvotes');    }
+function endElection()   { postNUI('endElection');   }
 
-    const form = document.getElementById("IdForm");
-    form.removeEventListener('submit', handleFormSubmit);
-    form.addEventListener('submit', handleFormSubmit);
-}
-function handleFormSubmit(event) {
-    event.preventDefault();
-    const playerNumber = document.getElementById("playerNumber").value;
-    axios.post(`https://${GetParentResourceName()}/resetSomeonevote`, {
-        playerNumber: playerNumber
-    })
+function resetSomeone() {
+    showPanel('Resetvote');
+
+    // Replace the form node to remove any previously-attached listener
+    const oldForm = document.getElementById('IdForm');
+    const newForm = oldForm.cloneNode(true);
+    oldForm.parentNode.replaceChild(newForm, oldForm);
+
+    newForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const playerNumber = document.getElementById('playerNumber').value;
+        postNUI('resetSomeonevote', { playerNumber });
+        showPanel('admin');
+    });
 }
 
-function exit(){
-    document.getElementById("ui").style.display = "none";  
-    document.getElementById("admin").style.display = "none";
-    document.getElementById("Resetvote").style.display = "none";
-    document.getElementById("deleterecord").style.display = "none";
-    axios.post(`https://${GetParentResourceName()}/hideFrame`, {})
-}
-
-function gobackresults(){
-    document.getElementById("result").style.display = "none";
-    document.getElementById("admin").style.display = "block";
-}
-
-function gobackmenu(){
-    document.getElementById("Resetvote").style.display = "none";
-    document.getElementById("admin").style.display = "block";
-}
-
-function gobackelection(){
-    document.getElementById("deleterecord").style.display = "none";
-    document.getElementById("admin").style.display = "block";
-}
+// ── Navigation helpers ────────────────────────────────────────────────────
+function exit()           { showPanel(null);    postNUI('hideFrame'); }
+function gobackresults()  { showPanel('admin'); }
+function gobackmenu()     { showPanel('admin'); }
+function gobackelection() { showPanel('admin'); }
